@@ -8,11 +8,6 @@ Page {
     rotation: 0
     wheelEnabled: false
 
-    Label {
-        text: qsTr("You are on Page 2.")
-        anchors.centerIn: parent
-    }
-
     ChartView {
         id: area
         anchors.fill: parent

@@ -5,7 +5,7 @@ ApplicationWindow {
     visible: true
     width: 300
     height: 450
-    title: qsTr("Tabs")
+    title: qsTr("Jump calculator")
 
     SwipeView {
         id: swipeView
@@ -16,6 +16,12 @@ ApplicationWindow {
         }
 
         Page2Form {
+        }
+
+        onCurrentIndexChanged: {
+            if(currentIndex==1) {
+                console.log("run calculating...")
+            }
         }
     }
 
