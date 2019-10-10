@@ -11,6 +11,7 @@ Page {
     ChartView {
         id: area
         anchors.fill: parent
+        theme: ChartView.ChartThemeDark
         AreaSeries {
             name: "AreaSeries"
             upperSeries: LineSeries {

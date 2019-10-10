@@ -6,9 +6,9 @@ Row{
     property string label_text
     property string edit_text
 
-    property var row_height: page.height / 7 - 6
-    property var left_column_width: page.width / 1.5
-    property var right_column_width: this_row.width-left_column_width-5
+    property var row_height: (swipeView.height-5) / 7 - 5
+    property var left_column_width: swipeView.width / 1.5
+    property var right_column_width: this_row.width-left_column_width - 5
 
     id: this_row
     spacing: 5
@@ -18,7 +18,7 @@ Row{
         id: this_label
         text: label_text
         lineHeight: 1
-        rightPadding: 5
+        rightPadding: 10
         transformOrigin: Item.Center
         renderType: Text.QtRendering
         fontSizeMode: Text.Fit
@@ -26,6 +26,7 @@ Row{
         horizontalAlignment: Text.AlignRight
         wrapMode: Text.WordWrap
         font.pointSize: 18
+
         height: row_height
         width: left_column_width
         background: Rectangle{
@@ -34,15 +35,15 @@ Row{
     }
 
     TextField{
-
         id: this_text
         text: edit_text
         font.letterSpacing: 0
-        leftPadding: 5
+        leftPadding: 10
+
         antialiasing: true
         topPadding: 0
         bottomPadding: 0
-        font.pointSize: 18
+        font.pointSize: 30
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         wrapMode: Text.NoWrap
@@ -55,5 +56,6 @@ Row{
             color: edit_field_color
         }
         inputMethodHints: Qt.ImhDigitsOnly
+
     }
 }
