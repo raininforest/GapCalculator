@@ -10,6 +10,7 @@ Row{
     property var left_column_width: swipeView.width / 1.5
     property var right_column_width: this_row.width-left_column_width - 5
 
+
     id: this_row
     spacing: 5
     anchors.left: parent.left
@@ -39,6 +40,8 @@ Row{
         text: edit_text
         font.letterSpacing: 0
         leftPadding: 10
+        cursorVisible: false
+
 
         antialiasing: true
         topPadding: 0
@@ -55,7 +58,11 @@ Row{
 
             color: edit_field_color
         }
-        inputMethodHints: Qt.ImhDigitsOnly
+        inputMethodHints: Qt.ImhFormattedNumbersOnly
+        onTextChanged: {
+            edit_text=text
+            window.setdata()
+        }
 
     }
 }

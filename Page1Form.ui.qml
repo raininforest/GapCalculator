@@ -8,6 +8,15 @@ Page {
 
     property string field_color: "#373737"
     property string edit_field_color: "#444444"
+    property var gap: gap_row.edit_text
+    property var table: table_row.edit_text
+    property var h_v: h_v_row.edit_text
+    property var h_p: h_p_row.edit_text
+    property var angle_v: angle_v_row.edit_text
+    property var angle_p: angle_p_row.edit_text
+    property var v: v_row.edit_text
+
+
 
     Column {
         id: main_column
@@ -18,6 +27,7 @@ Page {
             id: gap_row
             label_text: "Гэп, м"
             edit_text: "4.5"
+
         }
         Jc_row {
             id: table_row
