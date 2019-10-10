@@ -30,7 +30,7 @@ Page {
         Jc_row {
             id: table_row
             label_text: "Стол, м"
-            edit_text: "1"
+            edit_text: "0"
         }
         Jc_row {
             id: h_v_row
