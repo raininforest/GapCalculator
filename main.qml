@@ -41,11 +41,15 @@ ApplicationWindow {
         currentIndex: swipeView.currentIndex
         TabButton {
             id: tab1
-            text: qsTr("Параметры")
+            text: qsTr("Ввод")
         }
         TabButton {
             id: tab2
             text: qsTr("Трамплин")
+        }
+        TabButton {
+            id: tab3
+            text: qsTr("Инфо")
         }
     }
 }
