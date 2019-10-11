@@ -37,15 +37,15 @@ Page {
             edit_text: "1.2"
         }
         Jc_row {
-            id: h_p_row
-            label_text: "Высота приземления, м"
-            edit_text: "1"
-        }
-        Jc_row {
             id: angle_v_row
             label_text: "Угол вылета, град."
             edit_text: "20"
         }
+        Jc_row {
+            id: h_p_row
+            label_text: "Высота приземления, м"
+            edit_text: "1"
+        }        
         Jc_row {
             id: angle_p_row
             label_text: "Угол приземления, град."
