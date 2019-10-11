@@ -26,7 +26,7 @@ ApplicationWindow {
                 page2.update_series()
             }
             else{
-                //doing nothing
+                Qt.inputMethod.hide();
             }
         }
 

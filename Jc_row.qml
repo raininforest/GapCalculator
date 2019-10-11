@@ -28,10 +28,15 @@ Row{
         wrapMode: Text.WordWrap
         font.pointSize: 18
 
+
         height: row_height
         width: left_column_width
         background: Rectangle{
             color: field_color
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: Qt.inputMethod.hide();
         }
     }
 

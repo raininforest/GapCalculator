@@ -24,8 +24,7 @@ Page {
         Jc_row {
             id: gap_row
             label_text: "Гэп, м"
-            edit_text: "4.5"
-
+            edit_text: "4"
         }
         Jc_row {
             id: table_row
@@ -59,5 +58,3 @@ Page {
         }
     }
 }
-
-

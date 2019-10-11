@@ -3,24 +3,42 @@ import QtQuick.Controls 2.0
 import QtCharts 2.0
 
 Page {
-    property var minX: -Math.ceil(Math.abs(-d_v))
-    property var maxX: Math.ceil(gap+d_p)
-    property var minY: 0
-    property var maxY: Math.ceil(page.h_v+1)
-    property var h_v: page.h_v
-    property var d_v: (page.h_v/Math.tan(page.angle_v*3.14/180))
-    property var h_p: page.h_p
-    property var d_p: (Math.abs(page.h_p)/Math.tan(page.angle_p*3.14/180))
-    property var gap: page.gap
-    property var table: page.table
+    property real minX: -Math.ceil(Math.abs(-d_v))
+    property real maxX: Math.ceil(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))))
+    property real minY: 0
+    property real maxY: Math.ceil(page.h_v+2)
+    property real h_v: page.h_v
+    property real d_v: (page.h_v/Math.tan(page.angle_v*3.14/180))
+    property real h_p: page.h_p
+    property real d_p: gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180)))
+    property real gap: page.gap
+    property real table: page.table
+
+    property real v0 : page.v*1000/3600
+    property real v0x : v0*Math.cos(page.angle_v*3.14/180)
+    property real v0y : v0*Math.sin(page.angle_v*3.14/180)
+    property real g : 9.82
+    property real xbegin : 0
+    property real xend : maxX
+    property real dx : (xend-xbegin)/10
+
+    function fx(x){
+        if (v0x!==0){
+            console.log("V0x=",v0x,"V0y=",v0y)
+            var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
+            return res
+        }
+        else return 0
+    }
 
     function update_series(){
         if (h_p<0) {
-            minY=-Math.ceil(Math.abs(h_p))-4
+            minY=-Math.ceil(Math.abs(h_p))-2
         }
         else{
             minY=0
         }
+
 
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
@@ -38,10 +56,16 @@ Page {
         p_line_bottom_series.clear()
         p_line_series.append(gap-table,h_p)
         p_line_series.append(gap,h_p)
-        p_line_series.append(gap+d_p,minY)
+        p_line_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
         p_line_bottom_series.append(gap-table,minY)
         p_line_bottom_series.append(gap,minY)
-        p_line_bottom_series.append(gap+d_p,minY)
+        p_line_bottom_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
+
+        spline.clear()
+        for (var px=xbegin;px<xend;px=px+dx){
+                spline.append(px, h_v+fx(px))
+                console.log("px= ",px, " f(px)=", fx(px))
+            }
     }
 
     id: page2
@@ -55,6 +79,25 @@ Page {
         anchors.fill: parent
         theme: ChartView.ChartThemeDark
         backgroundRoundness: 0
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: chartView.zoomReset()
+        }
+
+//        PinchArea{
+//            id: pa
+//            anchors.fill: parent
+//            onPinchUpdated: {
+//                chartView.zoomReset();
+//                var center_x = pinch.center.x
+//                var center_y = pinch.center.y
+//                var width_zoom = height/pinch.scale;
+//                var height_zoom = width/pinch.scale;
+//                var r = Qt.rect(center_x-width_zoom/2, center_y - height_zoom/2, width_zoom, height_zoom)
+//                chartView.zoomIn(r)
+//            }
+//        }
+
         ValueAxis {
             id: xvalueAxis
             tickCount: (Math.abs(minX)+maxX+1)
@@ -66,15 +109,17 @@ Page {
         ValueAxis {
             id: yvalueAxis
             tickCount: (Math.abs(minY)+maxY+1)
+
             minorTickCount: 1
-            labelFormat: "%2.1f"
+            labelFormat: "%d"
             min: minY
             max: maxY
         }
         AreaSeries {
             id: v_ser
             name: "Вылет"
-            color: "dark red"
+            color: "dark gray"
+            borderWidth: 0
             axisX: xvalueAxis
             axisY: yvalueAxis
             upperSeries: LineSeries {
@@ -87,7 +132,8 @@ Page {
         AreaSeries {
             id: p_ser
             name: "Приземление"
-            color: "red"
+            color: "gray"
+            borderWidth: 0
             axisX: xvalueAxis
             axisY: yvalueAxis
             upperSeries: LineSeries {
@@ -97,5 +143,16 @@ Page {
                 id: p_line_bottom_series
             }
         }
+        SplineSeries {
+            id: spline
+            name: "Траектория"
+            color: "red"
+            //opacity: 0.5
+            width: 5
+            style: Qt.DotLine
+            axisX: xvalueAxis
+            axisY: yvalueAxis
+        }
+
     }
 }
