@@ -24,7 +24,7 @@ Page {
 
     function fx(x){
         if (v0x!==0){
-            console.log("V0x=",v0x,"V0y=",v0y)
+//            console.log("V0x=",v0x,"V0y=",v0y)
             var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
             return res
         }
@@ -64,7 +64,7 @@ Page {
         spline.clear()
         for (var px=xbegin;px<xend;px=px+dx){
                 spline.append(px, h_v+fx(px))
-                console.log("px= ",px, " f(px)=", fx(px))
+//                console.log("px= ",px, " f(px)=", fx(px))
             }
     }
 
@@ -83,20 +83,6 @@ Page {
             anchors.fill: parent
             onDoubleClicked: chartView.zoomReset()
         }
-
-//        PinchArea{
-//            id: pa
-//            anchors.fill: parent
-//            onPinchUpdated: {
-//                chartView.zoomReset();
-//                var center_x = pinch.center.x
-//                var center_y = pinch.center.y
-//                var width_zoom = height/pinch.scale;
-//                var height_zoom = width/pinch.scale;
-//                var r = Qt.rect(center_x-width_zoom/2, center_y - height_zoom/2, width_zoom, height_zoom)
-//                chartView.zoomIn(r)
-//            }
-//        }
 
         ValueAxis {
             id: xvalueAxis

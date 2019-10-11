@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
-import QtCharts 2.0
 
 
 ApplicationWindow {
@@ -34,6 +33,7 @@ ApplicationWindow {
 
     footer: TabBar {
         id: tabBar
+        spacing: 5
         height: window.height/8
         contentHeight: window.height/8
         font.pointSize: 20

@@ -7,7 +7,7 @@ Row{
     property string edit_text
 
     property var row_height: (swipeView.height-5) / 7 - 5
-    property var left_column_width: swipeView.width / 1.5
+    property var left_column_width: swipeView.width/3*2-6
     property var right_column_width: this_row.width-left_column_width - 5
 
 
