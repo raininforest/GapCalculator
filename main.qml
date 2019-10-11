@@ -7,7 +7,7 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Gap calculator")
+    title: qsTr("Gap Calculator")
 
     SwipeView {
         id: swipeView
@@ -19,16 +19,18 @@ ApplicationWindow {
         Page2 {
             id:page2
         }
+        Page3 {
+            id:page3
+        }
 
         onCurrentIndexChanged: {
             if(currentIndex==1) {
                 page2.update_series()
             }
-            else{
+            else if (currentIndex==0){
                 Qt.inputMethod.hide();
             }
         }
-
     }
 
     footer: TabBar {
