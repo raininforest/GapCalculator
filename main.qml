@@ -10,10 +10,6 @@ ApplicationWindow {
     height: 480
     title: qsTr("Gap calculator")
 
-    function setdata(){
-        console.log(page.gap,page.table,page.h_p,page.h_v,page.angle_p,page.angle_v,page.v)
-    }
-
     SwipeView {
         id: swipeView
         anchors.fill: parent
@@ -27,7 +23,6 @@ ApplicationWindow {
 
         onCurrentIndexChanged: {
             if(currentIndex==1) {
-                setdata()
                 page2.update_series()
             }
             else{

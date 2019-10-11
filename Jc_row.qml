@@ -60,8 +60,12 @@ Row{
         }
         inputMethodHints: Qt.ImhFormattedNumbersOnly
         onTextChanged: {
-            edit_text=text
-            window.setdata()
+            if (text<=70){
+                edit_text=text
+            }
+            else {
+                text=""
+            }
         }
 
     }
