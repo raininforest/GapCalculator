@@ -3,14 +3,12 @@ import QtQuick.Controls 2.0
 import QtCharts 2.0
 
 Page {
-    property real minX: -Math.ceil(Math.abs(-d_v))
-    property real maxX: Math.ceil(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))))
+    property real minX: -4
+    property real maxX: gap+4
     property real minY: 0
     property real maxY: Math.ceil(page.h_v+2)
     property real h_v: page.h_v
-    property real d_v: (page.h_v/Math.tan(page.angle_v*3.14/180))
     property real h_p: page.h_p
-    property real d_p: gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180)))
     property real gap: page.gap
     property real table: page.table
 
@@ -24,7 +22,6 @@ Page {
 
     function fx(x){
         if (v0x!==0){
-//            console.log("V0x=",v0x,"V0y=",v0y)
             var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
             return res
         }
@@ -35,10 +32,12 @@ Page {
         if (h_p<0) {
             minY=-Math.ceil(Math.abs(h_p))-2
         }
-        else{
+        else if (h_p==0){
+            minY=-1
+        }
+        else {
             minY=0
         }
-
 
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
@@ -47,25 +46,48 @@ Page {
 
         v_line_series.clear()
         v_line_bottom_series.clear()
-        v_line_series.append(-d_v,0)
-        v_line_series.append(0,h_v)
-        v_line_bottom_series.append(-d_v,0)
-        v_line_bottom_series.append(0,0)
+        if (page.angle_v>0) {
+            v_line_series.append(-h_v/Math.tan(page.angle_v*3.14/180),0)
+            v_line_series.append(0,h_v)
+            v_line_bottom_series.append(-h_v/Math.tan(page.angle_v*3.14/180),minY)
+            v_line_bottom_series.append(0,minY)
+        }
+        else if (page.angle_v<0){
+            v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(page.angle_v*3.14/180)))
+            v_line_series.append(0,h_v)
+            v_line_bottom_series.append(minX,minY)
+            v_line_bottom_series.append(0,minY)
+        }
+        else if (page.angle_v==0) {
+            v_line_series.append(minX, h_v)
+            v_line_series.append(0,h_v)
+            v_line_bottom_series.append(minX,minY)
+            v_line_bottom_series.append(0,minY)
+        }
 
         p_line_series.clear()
         p_line_bottom_series.clear()
-        p_line_series.append(gap-table,h_p)
-        p_line_series.append(gap,h_p)
-        p_line_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
-        p_line_bottom_series.append(gap-table,minY)
-        p_line_bottom_series.append(gap,minY)
-        p_line_bottom_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
+        if (page.angle_p!=0){
+            p_line_series.append(gap-table,h_p)
+            p_line_series.append(gap,h_p)
+            p_line_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
+            p_line_bottom_series.append(gap-table,minY)
+            p_line_bottom_series.append(gap,minY)
+            p_line_bottom_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
+        }
+        else {
+            p_line_series.append(gap-table,h_p)
+            p_line_series.append(gap,h_p)
+            p_line_series.append(maxX,h_p)
+            p_line_bottom_series.append(gap-table,minY)
+            p_line_bottom_series.append(gap,minY)
+            p_line_bottom_series.append(maxX,minY)
+        }
 
         spline.clear()
         for (var px=xbegin;px<xend;px=px+dx){
-                spline.append(px, h_v+fx(px))
-//                console.log("px= ",px, " f(px)=", fx(px))
-            }
+            spline.append(px, h_v+fx(px))
+        }
     }
 
     id: page2

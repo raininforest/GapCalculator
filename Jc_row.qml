@@ -65,13 +65,45 @@ Row{
         }
         inputMethodHints: Qt.ImhFormattedNumbersOnly
         onTextChanged: {
-            if (text<=70){
-                edit_text=text
+            if (label_text==="Гэп, м"){
+                if ((text<=10)&(text>=0)) edit_text=text
+                else if (text>0) text="10"
+                else text="0"
             }
-            else {
-                text=""
+            else if (label_text==="Стол, м"){
+                if ((text<=10)&(text>=0)&(text<=page.gap)) edit_text=text
+                else if (text>page.gap) text=page.gap
+                else if (text>0) text="10"
+                else text="0"
             }
-        }
+            else if (label_text==="Высота вылета, м"){
+                if ((text<=5)&(text>=0)) edit_text=text
+                else if (text>0) text="5"
+                else text="0"
+            }
+            else if (label_text==="Высота приземления, м"){
+                if ((text<=5)&(text>=-5)) edit_text=text
+                else if (text<-5) edit_text="-5"
+                else if (text>5) edit_text="5"
+                else edit_text = "0"
+            }
+            else if (label_text==="Угол вылета, град."){
+                if ((text<=60)&(text>=-60)) edit_text=text
+                else if (text<60) edit_text="-60"
+                else if (text>60) edit_text="60"
+                else edit_text = "0"
+            }
+            else if (label_text==="Угол приземления, град."){
+                if ((text<=60)&(text>=0)) edit_text=text
+                else if (text>0) text="60"
+                else text="0"
+            }
+            else if (label_text==="Скорость на вылете, км/ч"){
+                if ((text<=60)&(text>=0)) edit_text=text
+                else if (text>0) text="60"
+                else text="0"
+            }
 
+        }
     }
 }
