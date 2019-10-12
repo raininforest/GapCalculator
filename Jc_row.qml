@@ -10,7 +10,6 @@ Row{
     property var left_column_width: swipeView.width/3*2-6
     property var right_column_width: this_row.width-left_column_width - 5
 
-
     id: this_row
     spacing: 5
     anchors.left: parent.left
@@ -85,12 +84,14 @@ Row{
                 if ((text<=5)&(text>=-5)) edit_text=text
                 else if (text<-5) edit_text="-5"
                 else if (text>5) edit_text="5"
+                else if (text.charAt(0)=="-") edit_text=text
                 else edit_text = "0"
             }
             else if (label_text==="Угол вылета, град."){
                 if ((text<=60)&(text>=-60)) edit_text=text
                 else if (text<60) edit_text="-60"
                 else if (text>60) edit_text="60"
+                else if (text.charAt(0)=="-") edit_text=text
                 else edit_text = "0"
             }
             else if (label_text==="Угол приземления, град."){
