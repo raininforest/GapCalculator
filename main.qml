@@ -38,7 +38,7 @@ ApplicationWindow {
         spacing: 5
         height: window.height/8
         contentHeight: window.height/8
-        font.pointSize: 16
+        font.pointSize: 20
         clip: false
         currentIndex: swipeView.currentIndex
         TabButton {
@@ -47,7 +47,7 @@ ApplicationWindow {
         }
         TabButton {
             id: tab2
-            text: qsTr("Трамплин")
+            text: qsTr("Гэп")
         }
         TabButton {
             id: tab3

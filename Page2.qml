@@ -11,11 +11,14 @@ Page {
     property real h_p: page.h_p
     property real gap: page.gap
     property real table: page.table
+    property real angle_v: page.angle_v*pi/180
+    property real angle_p: page.angle_p*pi/180
 
     property real v0 : page.v*1000/3600
-    property real v0x : v0*Math.cos(page.angle_v*3.14/180)
-    property real v0y : v0*Math.sin(page.angle_v*3.14/180)
-    property real g : 9.82
+    property real v0x : v0*Math.cos(angle_v)
+    property real v0y : v0*Math.sin(angle_v)
+    property real g : 9.80666
+    property real pi: 3.14159265359
     property real xbegin : 0
     property real xend : maxX
     property real dx : (xend-xbegin)/10
@@ -47,13 +50,13 @@ Page {
         v_line_series.clear()
         v_line_bottom_series.clear()
         if (page.angle_v>0) {
-            v_line_series.append(-h_v/Math.tan(page.angle_v*3.14/180),0)
+            v_line_series.append(-h_v/Math.tan(angle_v),0)
             v_line_series.append(0,h_v)
-            v_line_bottom_series.append(-h_v/Math.tan(page.angle_v*3.14/180),minY)
+            v_line_bottom_series.append(-h_v/Math.tan(angle_v),minY)
             v_line_bottom_series.append(0,minY)
         }
         else if (page.angle_v<0){
-            v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(page.angle_v*3.14/180)))
+            v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(angle_v)))
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
             v_line_bottom_series.append(0,minY)
@@ -70,10 +73,10 @@ Page {
         if (page.angle_p!=0){
             p_line_series.append(gap-table,h_p)
             p_line_series.append(gap,h_p)
-            p_line_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
+            p_line_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(angle_p))),minY)
             p_line_bottom_series.append(gap-table,minY)
             p_line_bottom_series.append(gap,minY)
-            p_line_bottom_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(page.angle_p*3.14/180))),minY)
+            p_line_bottom_series.append(gap+((Math.abs(minY)+h_p)/Math.abs(Math.tan(angle_p))),minY)
         }
         else {
             p_line_series.append(gap-table,h_p)
@@ -101,10 +104,6 @@ Page {
         anchors.fill: parent
         theme: ChartView.ChartThemeDark
         backgroundRoundness: 0
-        MouseArea{
-            anchors.fill: parent
-            onDoubleClicked: chartView.zoomReset()
-        }
 
         ValueAxis {
             id: xvalueAxis
@@ -155,7 +154,6 @@ Page {
             id: spline
             name: "Траектория"
             color: "red"
-            //opacity: 0.5
             width: 5
             style: Qt.DotLine
             axisX: xvalueAxis
