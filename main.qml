@@ -38,7 +38,7 @@ ApplicationWindow {
         spacing: 5
         height: window.height/8
         contentHeight: window.height/8
-        font.pointSize: 20
+        font.pointSize: 16
         clip: false
         currentIndex: swipeView.currentIndex
         TabButton {
