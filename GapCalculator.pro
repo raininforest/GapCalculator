@@ -1,5 +1,5 @@
 QT += qml quick charts
-
+QT += androidextras
 
 CONFIG += c++11
 
@@ -37,6 +37,8 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew \
     android/gradlew.bat \
+    android/res/drawable/splash.xml \
+    android/res/values/apptheme.xml \
     android/res/values/libs.xml
 
 contains(ANDROID_TARGET_ARCH,arm64-v8a) {
