@@ -1,7 +1,7 @@
 #include <QtWidgets/QApplication>
 #include <QQmlApplicationEngine>
 #include <QDebug>
-#include <QtAndroid>
+//#include <QtAndroid>
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +16,6 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
-    QtAndroid::hideSplashScreen();
+    //QtAndroid::hideSplashScreen();
     return app.exec();
 }
