@@ -104,7 +104,16 @@ Page {
         anchors.fill: parent
         theme: ChartView.ChartThemeDark
         backgroundRoundness: 0
+        legend.visible: false
 
+        Text {
+            id: name
+            text: qsTr("V0 = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
+            color: "white"
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
         ValueAxis {
             id: xvalueAxis
             tickCount: (Math.abs(minX)+maxX+1)
@@ -125,7 +134,8 @@ Page {
         AreaSeries {
             id: v_ser
             name: "Вылет"
-            color: "dark gray"
+
+            color: "gray"
             borderWidth: 0
             axisX: xvalueAxis
             axisY: yvalueAxis
