@@ -52,7 +52,6 @@ Page {
         v_line_series.clear()
         v_line_bottom_series.clear()
         if (page.angle_v>0) {
-            console.log(angle_v*180/pi)
             v_line_series.append(-h_v/Math.tan(angle_v),0)
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(-h_v/Math.tan(angle_v),minY)
@@ -89,28 +88,21 @@ Page {
             p_line_bottom_series.append(gap,minY)
             p_line_bottom_series.append(maxX,minY)
         }
-
         spline.clear()
         for (var px=xbegin;px<xend;px=px+dx){
             spline.append(px, h_v+fx(px))
-        }
-        console.log(angle_v,v0x)
+        }        
         angle_v=angle_v-(5*pi/180)
-        console.log(angle_v,v0x)
         spline_minus.clear()
         for (px=xbegin;px<xend;px=px+dx){
             spline_minus.append(px, h_v+fx(px))
         }
         angle_v=angle_v+10*pi/180
-        console.log(angle_v,v0x)
         spline_plus.clear()
         for (px=xbegin;px<xend;px=px+dx){
             spline_plus.append(px, h_v+fx(px))
         }
         angle_v=page.angle_v*pi/180
-        console.log(angle_v,v0x)
-
-
     }
 
     id: page2
