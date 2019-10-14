@@ -42,6 +42,8 @@ Page {
             minY=0
         }
 
+        angle_v=page.angle_v*pi/180
+
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
         yvalueAxis.min=minY
@@ -86,11 +88,21 @@ Page {
             p_line_bottom_series.append(gap,minY)
             p_line_bottom_series.append(maxX,minY)
         }
-
         spline.clear()
         for (var px=xbegin;px<xend;px=px+dx){
             spline.append(px, h_v+fx(px))
+        }        
+        angle_v=angle_v-(5*pi/180)
+        spline_minus.clear()
+        for (px=xbegin;px<xend;px=px+dx){
+            spline_minus.append(px, h_v+fx(px))
         }
+        angle_v=angle_v+10*pi/180
+        spline_plus.clear()
+        for (px=xbegin;px<xend;px=px+dx){
+            spline_plus.append(px, h_v+fx(px))
+        }
+        angle_v=page.angle_v*pi/180
     }
 
     id: page2
@@ -108,7 +120,7 @@ Page {
 
         Text {
             id: name
-            text: qsTr("V0 = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
+            text: qsTr("V на конце вылета = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
             color: "white"
             anchors.top: parent.top
             anchors.topMargin: 10
@@ -163,8 +175,28 @@ Page {
         SplineSeries {
             id: spline
             name: "Траектория"
+            color: "green"
+            width: 4
+            style: Qt.DotLine
+            axisX: xvalueAxis
+            axisY: yvalueAxis
+        }
+        SplineSeries {
+            id: spline_minus
+            //name: "Траектория"
+            opacity: 0.5
             color: "red"
-            width: 5
+            width: 3
+            style: Qt.DotLine
+            axisX: xvalueAxis
+            axisY: yvalueAxis
+        }
+        SplineSeries {
+            id: spline_plus
+            //name: "Траектория"
+            opacity: 0.5
+            color: "red"
+            width: 3
             style: Qt.DotLine
             axisX: xvalueAxis
             axisY: yvalueAxis
