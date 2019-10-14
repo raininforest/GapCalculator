@@ -184,6 +184,7 @@ Page {
         SplineSeries {
             id: spline_minus
             //name: "Траектория"
+            opacity: 0.5
             color: "red"
             width: 3
             style: Qt.DotLine
@@ -193,6 +194,7 @@ Page {
         SplineSeries {
             id: spline_plus
             //name: "Траектория"
+            opacity: 0.5
             color: "red"
             width: 3
             style: Qt.DotLine
