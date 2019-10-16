@@ -32,6 +32,14 @@ Page {
     }
 
     function update_series(){
+
+        if (h_v>h_p) {
+            maxY = Math.ceil(h_v)+4
+        }
+        else {
+            maxY = Math.ceil(h_p)+4
+        }
+
         if (h_p<0) {
             minY=-Math.ceil(Math.abs(h_p))-2
         }

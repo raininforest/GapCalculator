@@ -11,7 +11,7 @@ Page{
             font.pointSize: 30
         }
         Label{
-            text: "Версия: 1.1\nОбратная связь - sergeyvelesko@gmail.com"
+            text: "Версия: 1.2\nОбратная связь - sergeyvelesko@gmail.com"
             font.pointSize: 10
             color: "light gray"
         }
