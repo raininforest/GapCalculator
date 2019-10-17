@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import QtCharts 2.3
-import QtQuick.Window 2.2
+import QtCharts 2.0
 
 Page {
 
@@ -55,14 +54,14 @@ Page {
             maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
         }
         else{
-            maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)+1
+            maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
         }
         console.log("maxY=",maxY)
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
         yvalueAxis.min=minY
         yvalueAxis.max=maxY
-        yvalueAxis.applyNiceNumbers()
+        //yvalueAxis.applyNiceNumbers()
 
         v_line_series.clear()
         v_line_bottom_series.clear()
@@ -142,10 +141,6 @@ Page {
         theme: ChartView.ChartThemeDark
         backgroundRoundness: 0
         legend.visible: false
-
-        MouseArea{
-            anchors.fill: parent
-        }
 
         Text {
             id: name
