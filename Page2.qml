@@ -16,6 +16,7 @@ Page {
     property real angle_v: page.angle_v*pi/180
     property real angle_p: page.angle_p*pi/180
 
+    property real r: vR*vR/(2*g)
     property real vR: page.v*1000/3600
     property real v0: Math.sqrt(vR*vR-2*g*h_v)
     property real v0x: v0*Math.cos(angle_v)
@@ -36,6 +37,7 @@ Page {
     }
     function update_series(){
         v0=Math.sqrt(vR*vR-2*g*h_v)
+        r=vR*vR/(2*g)
         angle_v=page.angle_v*pi/180
 
         if (h_p<0) {
@@ -68,7 +70,8 @@ Page {
             v_line_bottom_series.append(0,minY)
         }
         else if (page.angle_v<0){
-            v0=Math.sqrt(vR*vR+2*g*h_v)
+            v0=vR
+            r=0
             v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(angle_v)))
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
@@ -76,6 +79,7 @@ Page {
         }
         else if (page.angle_v==0) {
             v0=vR
+            r=0
             v_line_series.append(minX, h_v)
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
@@ -123,6 +127,7 @@ Page {
             spline.append(0, h_v)
             spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
         }
+        //r=vR*vR/(2*g)
         v0: Math.sqrt(vR*vR-2*g*h_v)
     }
 
@@ -141,7 +146,7 @@ Page {
 
         Text {
             id: name
-            text: qsTr("Vразг.="+Number(vR*3600/1000).toLocaleString()+ " км/ч; Vо="+Number(v0*3600/1000).toFixed(1)+" км/ч; R вылета min="+Number(vR*vR/(2*g)).toFixed(1)+"м")
+            text: qsTr("Vразг.="+Number(vR*3600/1000).toFixed(1)+ " км/ч; Vо="+Number(v0*3600/1000).toFixed(1)+" км/ч; R вылета min="+Number(r).toFixed(1)+"м")
             color: "white"
             font.pointSize: 12
             anchors.top: parent.top
