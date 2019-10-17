@@ -99,7 +99,7 @@ Row{
                 else if (text>0) text="80"
                 else text="0"
             }
-            else if (label_text==="Скорость на вылете, км/ч"){
+            else if (label_text==="Скорость разгона, км/ч"){
                 if ((text<=70)&(text>=0)) edit_text=text
                 else if (text>0) text="70"
                 else text="0"

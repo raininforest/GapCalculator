@@ -20,9 +20,11 @@ Page {
     property real angle_v: page.angle_v*pi/180
     property real angle_p: page.angle_p*pi/180
 
-    property real v0 : page.v*1000/3600
-    property real v0x : v0*Math.cos(angle_v)
-    property real v0y : v0*Math.sin(angle_v)
+    property real vR: page.v*1000/3600
+    property real v0: Math.sqrt(vR*vR-2*g*h_v)
+    property real v0x: v0*Math.cos(angle_v)
+    property real v0y: v0*Math.sin(angle_v)
+
     property real g : 9.80666
     property real pi: 3.14159265359
     property real xbegin : 0
@@ -30,15 +32,14 @@ Page {
     property real dx : (xend-xbegin)/20
 
     function fx(x){
+
         if (v0x!==0){
             var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
             return res
         }
     }
-
-
-
     function update_series(){
+        angle_v=page.angle_v*pi/180
 
         if (h_p<0) {
             minY=-Math.ceil(Math.abs(h_p))-2
@@ -56,17 +57,12 @@ Page {
         else{
             maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)+1
         }
-
-
         console.log("maxY=",maxY)
-        angle_v=page.angle_v*pi/180
-
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
         yvalueAxis.min=minY
         yvalueAxis.max=maxY
         yvalueAxis.applyNiceNumbers()
-        console.log("k_scale=",k_scale,"k_tick=",xvalueAxis.tickCount/yvalueAxis.tickCount)
 
         v_line_series.clear()
         v_line_bottom_series.clear()
@@ -131,7 +127,7 @@ Page {
         else {
             spline.append(0, h_v)
             spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
-        }
+        }        
     }
 
     id: page2
@@ -150,23 +146,10 @@ Page {
         MouseArea{
             anchors.fill: parent
         }
-//        PinchArea{
-//            id: pa
-//            anchors.fill: parent
-//            onPinchUpdated: {
-//                chartView.zoomReset();
-//                var center_x = pinch.center.x
-//                var center_y = pinch.center.y
-//                var width_zoom = height/pinch.scale;
-//                var height_zoom = width/pinch.scale;
-//                var r = Qt.rect(center_x-width_zoom/2, center_y - height_zoom/2, width_zoom, height_zoom)
-//                chartView.zoomIn(r)
-//            }
-//        }
 
         Text {
             id: name
-            text: qsTr("V на конце вылета = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
+            text: qsTr("Vразг. = "+Number(vR*3600/1000).toLocaleString()+ " км/ч; Vвыл. = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
             color: "white"
             anchors.top: parent.top
             anchors.topMargin: 10
