@@ -5,8 +5,6 @@ import QtQuick.Controls 2.5
 
 ApplicationWindow {
 
-    property real vis_chart_width: page2.chartW
-    property real vis_chart_height: page2.chartH
     property bool width_changed:false
     property bool height_changed:false
     property bool new_orientation:false
@@ -21,13 +19,8 @@ ApplicationWindow {
     onNew_orientationChanged: {
         height_changed=false
         width_changed=false
-        console.log("orientation changed..")
-        console.log("page width:",width,"page height:",height)
-
         page2.k_scale = width/(height-height/8)
-        console.log("k_scale before update:",page2.k_scale)
         page2.update_series()
-        console.log("k_scale after update:",page2.k_scale)
     }
 
     id: window
@@ -54,7 +47,6 @@ ApplicationWindow {
         onCurrentIndexChanged: {
             if(currentIndex==1) {
                 page2.k_scale = window.width/(window.height-window.height/8)
-                console.log("press tabbutton:",page.width,page.height)
                 page2.update_series()
 
             }

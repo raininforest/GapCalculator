@@ -5,9 +5,6 @@ import QtCharts 2.0
 Page {
 
     property var k_scale
-    property real chartW: chartView.width
-    property real chartH: chartView.height
-
     property real minX: -4
     property real maxX: Math.round(gap)+4
     property real minY: 0
@@ -56,12 +53,10 @@ Page {
         else{
             maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
         }
-        console.log("maxY=",maxY)
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
         yvalueAxis.min=minY
         yvalueAxis.max=maxY
-        //yvalueAxis.applyNiceNumbers()
 
         v_line_series.clear()
         v_line_bottom_series.clear()
@@ -83,7 +78,6 @@ Page {
             v_line_bottom_series.append(minX,minY)
             v_line_bottom_series.append(0,minY)
         }
-
         p_line_series.clear()
         p_line_bottom_series.clear()
         if (page.angle_p!=0){
@@ -102,7 +96,6 @@ Page {
             p_line_bottom_series.append(gap,minY)
             p_line_bottom_series.append(maxX,minY)
         }
-
         spline.clear()
         spline_minus.clear()
         spline_plus.clear()
@@ -138,14 +131,15 @@ Page {
     ChartView {
         id: chartView
         anchors.fill: parent
-        theme: ChartView.ChartThemeDark
+        backgroundColor: "#202020"
         backgroundRoundness: 0
         legend.visible: false
 
         Text {
             id: name
-            text: qsTr("Vразг. = "+Number(vR*3600/1000).toLocaleString()+ " км/ч; Vвыл. = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
+            text: qsTr("Vразг.="+Number(vR*3600/1000).toLocaleString()+ " км/ч; Vо="+Number(v0*3600/1000).toFixed(1)+" км/ч; R вылета min="+Number(vR*vR/(2*g)).toFixed(1)+"м")
             color: "white"
+            font.pointSize: 12
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
@@ -158,6 +152,10 @@ Page {
             min: minX
             max: maxX
             labelsFont:Qt.font({pointSize: 10})
+            color: "grey"
+            gridLineColor: "grey"
+            labelsColor: "white"
+            minorGridLineColor : "#555555"
         }
         ValueAxis {
             id: yvalueAxis
@@ -167,7 +165,10 @@ Page {
             min: minY
             max: maxY
             labelsFont:Qt.font({pointSize: 10})
-
+            color: "grey"
+            gridLineColor: "grey"
+            labelsColor: "white"
+            minorGridLineColor : "#555555"
         }
         AreaSeries {
             id: v_ser
@@ -224,6 +225,5 @@ Page {
             axisX: xvalueAxis
             axisY: yvalueAxis
         }
-
     }
 }
