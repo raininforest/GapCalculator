@@ -88,20 +88,20 @@ Row{
                 else edit_text = "0"
             }
             else if (label_text==="Угол вылета, град."){
-                if ((text<=60)&(text>=-60)) edit_text=text
-                else if (text<60) edit_text="-60"
-                else if (text>60) edit_text="60"
+                if ((text<=90)&(text>=-60)) edit_text=text
+                else if (text<-60) edit_text="-60"
+                else if (text>90) edit_text="90"
                 else if (text.charAt(0)=="-") edit_text=text
                 else edit_text = "0"
             }
             else if (label_text==="Угол приземления, град."){
-                if ((text<=60)&(text>=0)) edit_text=text
-                else if (text>0) text="60"
+                if ((text<=80)&(text>=0)) edit_text=text
+                else if (text>0) text="80"
                 else text="0"
             }
             else if (label_text==="Скорость на вылете, км/ч"){
-                if ((text<=60)&(text>=0)) edit_text=text
-                else if (text>0) text="60"
+                if ((text<=70)&(text>=0)) edit_text=text
+                else if (text>0) text="70"
                 else text="0"
             }
 
