@@ -53,8 +53,8 @@ Page {
         }
         Jc_row {
             id: v_row
-            label_text: "Скорость на вылете, км/ч"
-            edit_text: "30"
+            label_text: "Скорость разгона, км/ч"
+            edit_text: "35"
         }
     }
 }

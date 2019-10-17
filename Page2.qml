@@ -3,10 +3,12 @@ import QtQuick.Controls 2.0
 import QtCharts 2.0
 
 Page {
+
+    property var k_scale
     property real minX: -4
-    property real maxX: gap+4
+    property real maxX: Math.round(gap)+4
     property real minY: 0
-    property real maxY: Math.ceil(page.h_v+2)
+    property real maxY
     property real h_v: page.h_v
     property real h_p: page.h_p
     property real gap: page.gap
@@ -14,24 +16,30 @@ Page {
     property real angle_v: page.angle_v*pi/180
     property real angle_p: page.angle_p*pi/180
 
-    property real v0 : page.v*1000/3600
-    property real v0x : v0*Math.cos(angle_v)
-    property real v0y : v0*Math.sin(angle_v)
+    property real r: vR*vR/(2*g)
+    property real vR: page.v*1000/3600
+    property real v0: Math.sqrt(vR*vR-2*g*h_v)
+    property real v0x: v0*Math.cos(angle_v)
+    property real v0y: v0*Math.sin(angle_v)
+
     property real g : 9.80666
     property real pi: 3.14159265359
     property real xbegin : 0
     property real xend : maxX
-    property real dx : (xend-xbegin)/10
+    property real dx : (xend-xbegin)/20
 
     function fx(x){
+
         if (v0x!==0){
             var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
             return res
         }
-        else return 0
     }
-
     function update_series(){
+        v0=Math.sqrt(vR*vR-2*g*h_v)
+        r=vR*vR/(2*g)
+        angle_v=page.angle_v*pi/180
+
         if (h_p<0) {
             minY=-Math.ceil(Math.abs(h_p))-2
         }
@@ -42,8 +50,12 @@ Page {
             minY=0
         }
 
-        angle_v=page.angle_v*pi/180
-
+        if (k_scale>1){
+            maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
+        }
+        else{
+            maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
+        }
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
         yvalueAxis.min=minY
@@ -58,18 +70,21 @@ Page {
             v_line_bottom_series.append(0,minY)
         }
         else if (page.angle_v<0){
+            v0=vR
+            r=0
             v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(angle_v)))
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
             v_line_bottom_series.append(0,minY)
         }
         else if (page.angle_v==0) {
+            v0=vR
+            r=0
             v_line_series.append(minX, h_v)
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
             v_line_bottom_series.append(0,minY)
         }
-
         p_line_series.clear()
         p_line_bottom_series.clear()
         if (page.angle_p!=0){
@@ -89,20 +104,31 @@ Page {
             p_line_bottom_series.append(maxX,minY)
         }
         spline.clear()
-        for (var px=xbegin;px<xend;px=px+dx){
-            spline.append(px, h_v+fx(px))
-        }        
-        angle_v=angle_v-(5*pi/180)
         spline_minus.clear()
-        for (px=xbegin;px<xend;px=px+dx){
-            spline_minus.append(px, h_v+fx(px))
-        }
-        angle_v=angle_v+10*pi/180
         spline_plus.clear()
-        for (px=xbegin;px<xend;px=px+dx){
-            spline_plus.append(px, h_v+fx(px))
+
+        if (page.angle_v<89){
+            for (var px=xbegin;px<xend;px=px+dx){
+                spline.append(px, h_v+fx(px))
+            }
+            if (page.angle_v<84) {
+                angle_v=angle_v-(5*pi/180)
+                for (px=xbegin;px<xend;px=px+dx){
+                    spline_minus.append(px, h_v+fx(px))
+                }maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
+                angle_v=angle_v+10*pi/180
+                for (px=xbegin;px<xend;px=px+dx){
+                    spline_plus.append(px, h_v+fx(px))
+                }
+                angle_v=page.angle_v*pi/180
+            }
         }
-        angle_v=page.angle_v*pi/180
+        else {
+            spline.append(0, h_v)
+            spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
+        }
+        //r=vR*vR/(2*g)
+        v0: Math.sqrt(vR*vR-2*g*h_v)
     }
 
     id: page2
@@ -114,39 +140,48 @@ Page {
     ChartView {
         id: chartView
         anchors.fill: parent
-        theme: ChartView.ChartThemeDark
+        backgroundColor: "#202020"
         backgroundRoundness: 0
         legend.visible: false
 
         Text {
             id: name
-            text: qsTr("V на конце вылета = "+Number(v0*3600/1000).toLocaleString()+" км/ч")
+            text: qsTr("Vразг.="+Number(vR*3600/1000).toFixed(1)+ " км/ч; Vо="+Number(v0*3600/1000).toFixed(1)+" км/ч; R вылета min="+Number(r).toFixed(1)+"м")
             color: "white"
+            font.pointSize: 12
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
         }
         ValueAxis {
             id: xvalueAxis
-            tickCount: (Math.abs(minX)+maxX+1)
+            tickCount: Math.ceil(Math.abs(minX)+maxX+1)
             labelFormat: "%d"
             minorTickCount: 1
             min: minX
             max: maxX
+            labelsFont:Qt.font({pointSize: 10})
+            color: "grey"
+            gridLineColor: "grey"
+            labelsColor: "white"
+            minorGridLineColor : "#555555"
         }
         ValueAxis {
             id: yvalueAxis
-            tickCount: (Math.abs(minY)+maxY+1)
-
+            tickCount: Math.ceil(Math.abs(minY)+maxY+1)
             minorTickCount: 1
             labelFormat: "%d"
             min: minY
             max: maxY
+            labelsFont:Qt.font({pointSize: 10})
+            color: "grey"
+            gridLineColor: "grey"
+            labelsColor: "white"
+            minorGridLineColor : "#555555"
         }
         AreaSeries {
             id: v_ser
             name: "Вылет"
-
             color: "gray"
             borderWidth: 0
             axisX: xvalueAxis
@@ -183,24 +218,21 @@ Page {
         }
         SplineSeries {
             id: spline_minus
-            //name: "Траектория"
-            opacity: 0.5
+            opacity: 0.8
             color: "red"
-            width: 3
+            width: 2
             style: Qt.DotLine
             axisX: xvalueAxis
             axisY: yvalueAxis
         }
         SplineSeries {
             id: spline_plus
-            //name: "Траектория"
-            opacity: 0.5
+            opacity: 0.8
             color: "red"
-            width: 3
+            width: 2
             style: Qt.DotLine
             axisX: xvalueAxis
             axisY: yvalueAxis
         }
-
     }
 }
