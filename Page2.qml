@@ -35,6 +35,7 @@ Page {
         }
     }
     function update_series(){
+        v0=Math.sqrt(vR*vR-2*g*h_v)
         angle_v=page.angle_v*pi/180
 
         if (h_p<0) {
@@ -67,12 +68,14 @@ Page {
             v_line_bottom_series.append(0,minY)
         }
         else if (page.angle_v<0){
+            v0=Math.sqrt(vR*vR+2*g*h_v)
             v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(angle_v)))
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
             v_line_bottom_series.append(0,minY)
         }
         else if (page.angle_v==0) {
+            v0=vR
             v_line_series.append(minX, h_v)
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
@@ -119,7 +122,8 @@ Page {
         else {
             spline.append(0, h_v)
             spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
-        }        
+        }
+        v0: Math.sqrt(vR*vR-2*g*h_v)
     }
 
     id: page2
