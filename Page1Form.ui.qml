@@ -3,8 +3,8 @@ import QtQuick.Controls 2.5
 
 Page {
     id: page
-    width: 600
-    height: 400
+    width: 800
+    height: 600
 
     property string field_color: "#373737"
     property string edit_field_color: "#444444"
