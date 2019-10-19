@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.2
 import QtQuick.Controls 2.5
 
 Page {
