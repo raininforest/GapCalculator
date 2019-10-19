@@ -6,6 +6,8 @@ Page{
     ScrollView{
         width: parent.width
         contentWidth: column_layout.width
+        anchors.top: parent.top
+        anchors.topMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
         height: parent.height
