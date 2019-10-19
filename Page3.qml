@@ -6,7 +6,6 @@ Page{
     ScrollView{
         width: parent.width
         contentWidth: column_layout.width
-
         anchors.left: parent.left
         anchors.leftMargin: 10
         height: parent.height
@@ -27,7 +26,6 @@ Page{
                 color: "#555555"
                 Layout.fillWidth: true
             }
-
             Label{
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap

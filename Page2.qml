@@ -127,7 +127,6 @@ Page {
             spline.append(0, h_v)
             spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
         }
-        //r=vR*vR/(2*g)
         v0: Math.sqrt(vR*vR-2*g*h_v)
     }
 
