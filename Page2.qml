@@ -27,7 +27,7 @@ Page {
     property real pi: 3.14159265359
     property real xbegin : 0
     property real xend : maxX
-    property real dx : (xend-xbegin)/20
+    property real dx : (xend-xbegin)/40
 
     function fx(x){
 
