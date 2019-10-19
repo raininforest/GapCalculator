@@ -144,22 +144,13 @@ Page {
         backgroundRoundness: 0
         legend.visible: false
 
-//        Text {
-//            id: name
-//            text: qsTr("Vразг.="+Number(vR*3600/1000).toFixed(1)+ " км/ч; Vо="+Number(v0*3600/1000).toFixed(1)+" км/ч; R вылета min="+Number(r).toFixed(1)+"м")
-//            color: "white"
-//            font.pointSize: 12
-//            anchors.top: parent.top
-//            anchors.topMargin: 10
-//            anchors.horizontalCenter: parent.horizontalCenter
-//        }
         Rectangle{
             width: info.width+20
             height: info.height+20
             x: chartView.plotArea.x+10
             y: chartView.plotArea.y+10
             color: "#555555"
-            opacity: 0.5
+            opacity: 0.8
             Text {
                 id: info
                 text:"Vразг. = "+Number(vR*3600/1000).toFixed(1)+ " км/ч
