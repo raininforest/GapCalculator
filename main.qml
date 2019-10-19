@@ -1,9 +1,9 @@
 import QtQuick 2.2
 import QtQuick.Controls 2.5
 
-
-
 ApplicationWindow {
+
+    signal check()
 
     property bool width_changed:false
     property bool height_changed:false

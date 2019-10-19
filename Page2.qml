@@ -147,9 +147,11 @@ Page {
         MouseArea{
             anchors.fill: parent
             onDoubleClicked: {
+                check()
                 chartView.grabToImage(function(result) {
-                    console.log("result: ",result.saveToFile("/storage/emulated/0/Pictures/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+                    console.log("result: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
                 });
+                appearence.running=true
             }
         }
 
@@ -177,8 +179,21 @@ R вылета min = "+Number(r).toFixed(1)+" м
                 anchors.top: parent.top
                 anchors.topMargin: 10
                 anchors.horizontalCenter: parent.horizontalCenter
-
             }
+        }
+        Rectangle{
+            id:black_background
+            anchors.fill: parent
+            color: "black"
+            opacity: 0
+        }
+        OpacityAnimator{
+            id:appearence
+            target: black_background;
+            from: 1;
+            to: 0;
+            duration: 1000
+            running: false
         }
         ValueAxis {
             id: xvalueAxis
