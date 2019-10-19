@@ -23,7 +23,7 @@ Page{
                 Layout.fillWidth: true
             }
             Label{
-                text: "Версия: 1.2.2\nОбратная связь - sergeyvelesko@gmail.com"
+                text: "Версия: 1.3\nОбратная связь - sergeyvelesko@gmail.com"
                 font.pointSize: 16
                 color: "#555555"
                 Layout.fillWidth: true

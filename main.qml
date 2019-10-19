@@ -34,7 +34,7 @@ ApplicationWindow {
         anchors.fill: parent
         currentIndex: tabBar.currentIndex
         Page1Form {
-            id:page
+            id:page            
         }
         Page2 {
             id:page2

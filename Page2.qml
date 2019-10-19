@@ -144,6 +144,15 @@ Page {
         backgroundRoundness: 0
         legend.visible: false
 
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: {
+                chartView.grabToImage(function(result) {
+                    console.log("result: ",result.saveToFile("/storage/emulated/0/Pictures/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+                });
+            }
+        }
+
         Rectangle{
             width: info.width+20
             height: info.height+20

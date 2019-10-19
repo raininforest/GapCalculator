@@ -17,5 +17,6 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
     QtAndroid::hideSplashScreen();
+    QtAndroid::requestPermissionsSync(QStringList({"android.permission.WRITE_EXTERNAL_STORAGE"}),5000);
     return app.exec();
 }
