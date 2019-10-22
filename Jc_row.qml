@@ -65,8 +65,8 @@ Row{
         inputMethodHints: Qt.ImhFormattedNumbersOnly
         onTextChanged: {
             if (label_text==="Гэп, м"){
-                if ((text<=10)&(text>=0)) edit_text=text
-                else if (text>0) text="10"
+                if ((text<=25)&(text>=0)) edit_text=text
+                else if (text>0) text="25"
                 else text="0"
             }
             else if (label_text==="Стол, м"){

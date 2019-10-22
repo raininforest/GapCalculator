@@ -37,6 +37,28 @@ Page {
         }
     }
     function update_series(){
+
+        if((gap>6)&(gap<20)){
+            xvalueAxis.labelsFont.pointSize=8
+            yvalueAxis.labelsFont.pointSize=8
+            if (!window.was_warning){
+                warning_rect.visible=true
+                window.was_warning=true
+            }
+        }
+        else if(gap>20){
+            xvalueAxis.labelsFont.pointSize=6
+            yvalueAxis.labelsFont.pointSize=6
+            if (!window.was_warning){
+                warning_rect.visible=true
+                window.was_warning=true
+            }
+        }
+        else {
+            xvalueAxis.labelsFont.pointSize=10
+            yvalueAxis.labelsFont.pointSize=10
+        }
+
         v0=Math.sqrt(vR*vR-2*g*h_v)
         r=vR*vR/(2*g)
         angle_v=page.angle_v*pi/180
@@ -142,7 +164,7 @@ Page {
         anchors.fill: parent
         backgroundColor: "#202020"
         backgroundRoundness: 0
-        legend.visible: false
+        legend.visible: false        
 
         MouseArea{
             anchors.fill: parent
@@ -275,6 +297,38 @@ R вылета min = "+Number(r).toFixed(1)+" м
             style: Qt.DotLine
             axisX: xvalueAxis
             axisY: yvalueAxis
+        }
+
+        Rectangle{
+            id: warning_rect
+            anchors.fill: parent
+            visible: false
+            color: "#000000"
+            Label{
+                y:window.height/8
+                id: warning_label
+                horizontalAlignment: Text.AlignHCenter
+                text: "Вы хотите рассчитать большой трамплин.\n\nПомните, что в расчёте не учитывается сопротивление воздуха, которое может сильно повлиять на вашу скорость в полёте, что в свою очередь заметно повлияет на место приземления.
+Возрастает риск не долететь."
+                font.pointSize: 18
+                color: "white"
+                wrapMode: "WordWrap"
+                clip: true
+                width: parent.width
+            }
+            Button{
+                id:ok_warning
+                width:window.width/2
+                height: 60
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: warning_label.bottom
+                anchors.topMargin: 20
+                text: "Понятно"
+                font.pointSize: 18
+                onClicked: {
+                    warning_rect.visible=false
+                }
+            }
         }
     }
 }

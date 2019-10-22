@@ -4,7 +4,7 @@ import QtQuick.Controls 2.5
 ApplicationWindow {
 
     signal check()
-
+    property bool was_warning: false
     property bool width_changed:false
     property bool height_changed:false
     property bool new_orientation:false
