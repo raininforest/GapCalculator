@@ -46,7 +46,8 @@ Page{
         anchors.fill: parent
         backgroundColor: "#202020"
         backgroundRoundness: 0
-        legend.visible: false
+        legend.visible: true
+        legend.labelColor: "white"
         visible: chart_visible
 
         MouseArea{
@@ -102,7 +103,7 @@ Page{
         }
         AreaSeries {
             id: v_ser_rmin
-            name: "Вылет"
+            name: "R min"
             color: "red"
             opacity: 0.6
             borderWidth: 0
@@ -116,7 +117,7 @@ Page{
         }
         AreaSeries {
             id: v_ser
-            name: "Вылет"
+            name: "R расчет."
             color: "gray"
             opacity: 0.8
             borderWidth: 0

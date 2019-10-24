@@ -12,7 +12,7 @@ Page {
     property real h_v: page.h_v
     property real d_v: r*Math.sin(angle_v)
     property real h_p: page.h_p
-    property real d_p: h_p/Math.tan(angle_p)
+    property real d_p: Math.abs(h_p/Math.tan(angle_p))
     property real gap: page.gap
     property real table: page.table
     property real angle_v: page.angle_v*pi/180
@@ -32,10 +32,36 @@ Page {
     property real xend : maxX
     property real dx : (xend-xbegin)/40
 
+    property real xk //crossing coordinate
+    property real hg //how strong u land(eq drop height)
+
     function fx(x){
         if (v0x!==0){
             var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
             return res
+        }
+    }
+    function find_root(){
+
+        var a=-g/(2*v0x*v0x)
+        var b=v0y/v0x+h_p/d_p
+        var c=-(h_p+h_p*gap/d_p)+h_v
+        var diskr=b*b-4*a*c
+        if (diskr<0){
+            console.log("Нет пересечения траектории с приземлением!", diskr)
+            return 0
+        }
+        else {
+            xk=(-b-Math.sqrt(diskr))/(2*a)
+            console.log("Xk=",xk)
+            var vk=Math.sqrt(v0x*v0x+Math.pow((v0y-g*xk/v0x),2))
+            var fi=Math.atan((v0y-g*xk/v0x)/v0x)
+            console.log("Vk=",vk, "fi=", fi*180/pi)
+            var h_equi=Math.pow((vk*Math.sin(Math.abs(Math.abs(fi)-angle_p))),2)/(2*g)
+            if (h_equi>1){
+
+            }
+            return h_equi
         }
     }
 
@@ -49,6 +75,8 @@ Page {
             xvalueAxis.labelsFont.pointSize=8
             yvalueAxis.labelsFont.pointSize=8
             if (!window.was_warning){
+                warning_label.text="Вы хотите рассчитать большой трамплин.\n\nПомните, что в расчёте не учитывается сопротивление воздуха, которое может сильно повлиять на вашу скорость в полёте, что в свою очередь заметно повлияет на место приземления.
+Возрастает риск не долететь."
                 warning_rect.visible=true
                 window.was_warning=true
             }
@@ -57,6 +85,8 @@ Page {
             xvalueAxis.labelsFont.pointSize=6
             yvalueAxis.labelsFont.pointSize=6
             if (!window.was_warning){
+                warning_label.text="Вы хотите рассчитать большой трамплин.\n\nПомните, что в расчёте не учитывается сопротивление воздуха, которое может сильно повлиять на вашу скорость в полёте, что в свою очередь заметно повлияет на место приземления.
+Возрастает риск не долететь."
                 warning_rect.visible=true
                 window.was_warning=true
             }
@@ -93,6 +123,8 @@ Page {
         yvalueAxis.min=minY
         yvalueAxis.max=maxY
 
+
+
         v_line_series.clear()
         v_line_bottom_series.clear()
         v_line_series_rmin.clear()
@@ -113,7 +145,6 @@ Page {
             v_line_bottom_series.append(0,0)
             page3.chart_visible=true
             page3.drawpage3()
-
 
         }
         else if (page.angle_v<0){
@@ -156,6 +187,17 @@ Page {
             p_line_bottom_series.append(gap,minY)
             p_line_bottom_series.append(maxX,minY)
         }
+
+            hg=find_root()
+            console.log("Hg=",hg)
+        if(xk>gap){
+            if (hg>1) {
+                warning_label2.text="Приземление будет жестким.\n\nОно будет эквивалентно дропу на плоскость с высоты "+Number(hg).toFixed(2)+" м.
+Попробуйте сделать угол приземления более пологим, чтобы он отличался от угла вылета не более, чем на 10 градусов."
+                warning_rect2.visible=true
+            }
+        }
+
         spline.clear()
         spline_minus.clear()
         spline_plus.clear()
@@ -181,7 +223,6 @@ Page {
             spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
         }
         //v0=Math.sqrt(vR*vR-2*g*h_v)
-        //console.log("rmin", rmin, "r", r, "d_v", d_v, "hr", hr)
     }
 
     id: page2
@@ -209,7 +250,7 @@ Page {
         }
 
         Rectangle{
-            width: info.width+20
+            width: info.width+10
             height: info.height+20
             x: chartView.plotArea.x+5
             y: chartView.plotArea.y+5
@@ -239,7 +280,7 @@ R вылета = "+Number(r).toFixed(1)+" м
             }
         }
         Rectangle{
-            width: info2.width+20
+            width: info2.width+10
             height: info2.height+20
             x: chartView.plotArea.x+chartView.plotArea.width-width-5
             y: chartView.plotArea.y+5
@@ -369,6 +410,35 @@ R вылета = "+Number(r).toFixed(1)+" м
         }
 
         Rectangle{
+            id: warning_rect2
+            anchors.fill: parent
+            visible: false
+            color: "#000000"
+            Label{
+                y:window.height/8
+                id: warning_label2
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: 18
+                color: "white"
+                wrapMode: "WordWrap"
+                clip: true
+                width: parent.width
+            }
+            Button{
+                id:ok_warning2
+                width:window.width/2
+                height: 60
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: warning_label2.bottom
+                anchors.topMargin: 20
+                text: "Понятно"
+                font.pointSize: 18
+                onClicked: {
+                    warning_rect2.visible=false
+                }
+            }
+        }
+        Rectangle{
             id: warning_rect
             anchors.fill: parent
             visible: false
@@ -377,8 +447,6 @@ R вылета = "+Number(r).toFixed(1)+" м
                 y:window.height/8
                 id: warning_label
                 horizontalAlignment: Text.AlignHCenter
-                text: "Вы хотите рассчитать большой трамплин.\n\nПомните, что в расчёте не учитывается сопротивление воздуха, которое может сильно повлиять на вашу скорость в полёте, что в свою очередь заметно повлияет на место приземления.
-Возрастает риск не долететь."
                 font.pointSize: 18
                 color: "white"
                 wrapMode: "WordWrap"
@@ -395,7 +463,7 @@ R вылета = "+Number(r).toFixed(1)+" м
                 text: "Понятно"
                 font.pointSize: 18
                 onClicked: {
-                    warning_rect.visible=false
+                    warning_rect.visible=false                    
                 }
             }
         }

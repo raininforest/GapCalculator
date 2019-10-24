@@ -31,7 +31,6 @@ Page{
             Label{
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-
                 clip: true
                 color: "red"
                 font.pointSize: 14
