@@ -4,20 +4,23 @@ import QtCharts 2.3
 
 Page {
 
-
     property var k_scale
     property real minX: -4
     property real maxX: Math.round(gap)+4
     property real minY: 0
     property real maxY
     property real h_v: page.h_v
+    property real d_v: r*Math.sin(angle_v)
     property real h_p: page.h_p
+    property real d_p: h_p/Math.tan(angle_p)
     property real gap: page.gap
     property real table: page.table
     property real angle_v: page.angle_v*pi/180
     property real angle_p: page.angle_p*pi/180
+    property real hr: vR*vR/(2*g)
 
-    property real r: vR*vR/(2*g)
+    property real rmin: vR*vR/(2*g)
+    property real r: h_v/(1-Math.cos(angle_v))
     property real vR: page.v*1000/3600
     property real v0: Math.sqrt(vR*vR-2*g*h_v)
     property real v0x: v0*Math.cos(angle_v)
@@ -30,14 +33,18 @@ Page {
     property real dx : (xend-xbegin)/40
 
     function fx(x){
-
         if (v0x!==0){
             var res=(v0y*(x/v0x))-((g/2)*(Math.pow((x/v0x),2)))
             return res
         }
     }
-    function update_series(){
 
+    function fcircle(x,radius,d){
+        var res=-Math.sqrt(radius*radius-Math.pow((x+d),2))+radius
+        return res
+    }
+
+    function update_series(){
         if((gap>6)&(gap<20)){
             xvalueAxis.labelsFont.pointSize=8
             yvalueAxis.labelsFont.pointSize=8
@@ -60,8 +67,11 @@ Page {
         }
 
         v0=Math.sqrt(vR*vR-2*g*h_v)
-        r=vR*vR/(2*g)
+        rmin=vR*vR/(2*g)
         angle_v=page.angle_v*pi/180
+        r=h_v/(1-Math.cos(angle_v))
+        d_v=r*Math.sin(angle_v)
+        hr=vR*vR/(2*g)
 
         if (h_p<0) {
             minY=-Math.ceil(Math.abs(h_p))-2
@@ -86,23 +96,44 @@ Page {
 
         v_line_series.clear()
         v_line_bottom_series.clear()
+        v_line_series_rmin.clear()
         if (page.angle_v>0) {
-            v_line_series.append(-h_v/Math.tan(angle_v),0)
-            v_line_series.append(0,h_v)
-            v_line_bottom_series.append(-h_v/Math.tan(angle_v),minY)
-            v_line_bottom_series.append(0,minY)
+//            v_line_series.append(-h_v/Math.tan(angle_v),0)
+//            v_line_series.append(0,h_v)
+            var dcx=d_v/10
+//            console.log("d_v=",d_v)
+//            console.log("dcx=",dcx)
+            for (var cx=-d_v;cx<0.01;cx=cx+dcx){
+                v_line_series.append(cx,fcircle(cx,r,d_v))
+//                console.log("iteration: x=", cx,"y=",fcircle(cx,r,d_v))
+            }
+//            console.log("cx_end=",cx)
+            var d_v_min=rmin*Math.sin(angle_v)
+            var h_v_min=rmin-rmin*Math.cos(angle_v)
+            var dcxmin=d_v_min/10
+            for (cx=-d_v_min;cx<0.01;cx=cx+dcxmin){
+                v_line_series_rmin.append(cx,fcircle(cx,rmin,d_v_min))
+            }
+
+
+            v_line_bottom_series.append(-h_v/Math.tan(angle_v),0)
+            v_line_bottom_series.append(0,0)
         }
         else if (page.angle_v<0){
             v0=vR
+            rmin=0
             r=0
+            d_v=0
             v_line_series.append(minX, h_v+Math.abs(minX*Math.tan(angle_v)))
             v_line_series.append(0,h_v)
-            v_line_bottom_series.append(minX,minY)
-            v_line_bottom_series.append(0,minY)
+            v_line_bottom_series.append(minX,0)
+            v_line_bottom_series.append(0,0)
         }
         else if (page.angle_v==0) {
             v0=vR
+            rmin=0
             r=0
+            d_v=0
             v_line_series.append(minX, h_v)
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
@@ -150,7 +181,8 @@ Page {
             spline.append(0, h_v)
             spline.append(0, h_v + Math.pow(v0y,2)/(2*g))
         }
-        v0: Math.sqrt(vR*vR-2*g*h_v)
+        //v0=Math.sqrt(vR*vR-2*g*h_v)
+        //console.log("rmin", rmin, "r", r, "d_v", d_v, "hr", hr)
     }
 
     id: page2
@@ -171,7 +203,7 @@ Page {
             onDoubleClicked: {
                 check()
                 chartView.grabToImage(function(result) {
-                    console.log("result: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
                 });
                 appearence.running=true
             }
@@ -180,22 +212,44 @@ Page {
         Rectangle{
             width: info.width+20
             height: info.height+20
-            x: chartView.plotArea.x+10
-            y: chartView.plotArea.y+10
+            x: chartView.plotArea.x+5
+            y: chartView.plotArea.y+5
             color: "#555555"
             opacity: 0.8
             Text {
                 id: info
                 text:"Vразг. = "+Number(vR*3600/1000).toFixed(1)+ " км/ч
 Vо = "+Number(v0*3600/1000).toFixed(1)+" км/ч
-R вылета min = "+Number(r).toFixed(1)+" м
+R вылета = "+Number(r).toFixed(1)+" м
 Высота вылета = "+page.h_v+" м
+Длина вылета = " +Number(d_v).toFixed(1)+" м
 Угол вылета = "+page.angle_v+" град.
+------------------------------
 Гэп = "+page.gap+" м
 Стол = "+page.table+" м
+------------------------------
 Высота призем. = "+page.h_p+" м
+Длина призем. = " +Number(d_p).toFixed(1)+" м
 Угол призем. = "+page.angle_p+" град."
 
+                color: "white"
+                font.pointSize: 10
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+        Rectangle{
+            width: info2.width+20
+            height: info2.height+20
+            x: chartView.plotArea.x+chartView.plotArea.width-width-5
+            y: chartView.plotArea.y+5
+            color: "#555555"
+            opacity: 0.8
+            Text {
+                id: info2
+                text:"R вылета min = "+Number(rmin).toFixed(1)+" м
+Высота разгонки = "+Number(hr).toFixed(1)+" м"
                 color: "white"
                 font.pointSize: 10
                 anchors.top: parent.top
@@ -244,9 +298,24 @@ R вылета min = "+Number(r).toFixed(1)+" м
             minorGridLineColor : "#555555"
         }
         AreaSeries {
+            id: v_ser_rmin
+            name: "Вылет"
+            color: "red"
+            opacity: 0.6
+            borderWidth: 0
+            axisX: xvalueAxis
+            axisY: yvalueAxis
+            upperSeries: LineSeries {
+                id: v_line_series_rmin
+            }
+            lowerSeries: v_line_bottom_series
+
+        }
+        AreaSeries {
             id: v_ser
             name: "Вылет"
             color: "gray"
+            opacity: 0.8
             borderWidth: 0
             axisX: xvalueAxis
             axisY: yvalueAxis
@@ -257,6 +326,7 @@ R вылета min = "+Number(r).toFixed(1)+" м
                 id: v_line_bottom_series
             }
         }
+
         AreaSeries {
             id: p_ser
             name: "Приземление"
