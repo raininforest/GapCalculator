@@ -71,6 +71,7 @@ Page {
         angle_v=page.angle_v*pi/180
         r=h_v/(1-Math.cos(angle_v))
         d_v=r*Math.sin(angle_v)
+
         hr=vR*vR/(2*g)
 
         if (h_p<0) {
@@ -83,12 +84,10 @@ Page {
             minY=0
         }
 
-        if (k_scale>1){
-            maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
-        }
-        else{
-            maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
-        }
+        maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
+        page3.maxY=Math.ceil((d_v+1)/k_scale)-1
+        page3.maxX=Math.ceil(d_v)+1
+
         xvalueAxis.min=minX
         xvalueAxis.max=maxX
         yvalueAxis.min=minY
@@ -97,27 +96,25 @@ Page {
         v_line_series.clear()
         v_line_bottom_series.clear()
         v_line_series_rmin.clear()
-        if (page.angle_v>0) {
+        if ((page.angle_v>0)&(page.angle_v<=89)) {
 //            v_line_series.append(-h_v/Math.tan(angle_v),0)
 //            v_line_series.append(0,h_v)
             var dcx=d_v/10
-//            console.log("d_v=",d_v)
-//            console.log("dcx=",dcx)
             for (var cx=-d_v;cx<0.01;cx=cx+dcx){
                 v_line_series.append(cx,fcircle(cx,r,d_v))
-//                console.log("iteration: x=", cx,"y=",fcircle(cx,r,d_v))
             }
-//            console.log("cx_end=",cx)
             var d_v_min=rmin*Math.sin(angle_v)
             var h_v_min=rmin-rmin*Math.cos(angle_v)
             var dcxmin=d_v_min/10
             for (cx=-d_v_min;cx<0.01;cx=cx+dcxmin){
                 v_line_series_rmin.append(cx,fcircle(cx,rmin,d_v_min))
             }
-
-
             v_line_bottom_series.append(-h_v/Math.tan(angle_v),0)
             v_line_bottom_series.append(0,0)
+            page3.chart_visible=true
+            page3.drawpage3()
+
+
         }
         else if (page.angle_v<0){
             v0=vR
@@ -128,6 +125,7 @@ Page {
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,0)
             v_line_bottom_series.append(0,0)
+            page3.chart_visible=false
         }
         else if (page.angle_v==0) {
             v0=vR
@@ -138,6 +136,7 @@ Page {
             v_line_series.append(0,h_v)
             v_line_bottom_series.append(minX,minY)
             v_line_bottom_series.append(0,minY)
+            page3.chart_visible=false
         }
         p_line_series.clear()
         p_line_bottom_series.clear()
@@ -215,7 +214,7 @@ Page {
             x: chartView.plotArea.x+5
             y: chartView.plotArea.y+5
             color: "#555555"
-            opacity: 0.8
+            opacity: 0.6
             Text {
                 id: info
                 text:"Vразг. = "+Number(vR*3600/1000).toFixed(1)+ " км/ч
@@ -245,7 +244,7 @@ R вылета = "+Number(r).toFixed(1)+" м
             x: chartView.plotArea.x+chartView.plotArea.width-width-5
             y: chartView.plotArea.y+5
             color: "#555555"
-            opacity: 0.8
+            opacity: 0.6
             Text {
                 id: info2
                 text:"R вылета min = "+Number(rmin).toFixed(1)+" м
@@ -301,7 +300,7 @@ R вылета = "+Number(r).toFixed(1)+" м
             id: v_ser_rmin
             name: "Вылет"
             color: "red"
-            opacity: 0.6
+            opacity: 1
             borderWidth: 0
             axisX: xvalueAxis
             axisY: yvalueAxis
@@ -353,7 +352,7 @@ R вылета = "+Number(r).toFixed(1)+" м
         SplineSeries {
             id: spline_minus
             opacity: 0.8
-            color: "red"
+            color: "yellow"
             width: 2
             style: Qt.DotLine
             axisX: xvalueAxis
@@ -362,7 +361,7 @@ R вылета = "+Number(r).toFixed(1)+" м
         SplineSeries {
             id: spline_plus
             opacity: 0.8
-            color: "red"
+            color: "yellow"
             width: 2
             style: Qt.DotLine
             axisX: xvalueAxis

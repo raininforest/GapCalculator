@@ -6,5 +6,6 @@
         <file>Jc_row.qml</file>
         <file>Page2.qml</file>
         <file>Page3.qml</file>
+        <file>Page4.qml</file>
     </qresource>
 </RCC>

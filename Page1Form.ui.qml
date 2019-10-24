@@ -24,37 +24,37 @@ Page {
         Jc_row {
             id: gap_row
             label_text: "Гэп, м"
-            edit_text: "4"
+            edit_text: "10"
         }
         Jc_row {
             id: table_row
             label_text: "Стол, м"
-            edit_text: "0"
+            edit_text: "1"
         }
         Jc_row {
             id: h_v_row
             label_text: "Высота вылета, м"
-            edit_text: "1.2"
+            edit_text: "2"
         }
         Jc_row {
             id: angle_v_row
             label_text: "Угол вылета, град."
-            edit_text: "20"
+            edit_text: "30"
         }
         Jc_row {
             id: h_p_row
             label_text: "Высота приземления, м"
-            edit_text: "1"
+            edit_text: "1.5"
         }        
         Jc_row {
             id: angle_p_row
             label_text: "Угол приземления, град."
-            edit_text: "15"
+            edit_text: "20"
         }
         Jc_row {
             id: v_row
             label_text: "Скорость разгона, км/ч"
-            edit_text: "35"
+            edit_text: "45"
         }
     }
 }

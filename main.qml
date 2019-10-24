@@ -43,9 +43,12 @@ ApplicationWindow {
         Page3 {
             id:page3
         }
+        Page4 {
+            id:page4
+        }
 
         onCurrentIndexChanged: {
-            if(currentIndex==1) {
+            if(currentIndex==1|currentIndex==2) {
                 page2.k_scale = window.width/(window.height-window.height/8)
                 page2.update_series()
 
@@ -61,7 +64,7 @@ ApplicationWindow {
         spacing: 5
         height: window.height/8
         contentHeight: window.height/8
-        font.pointSize: 20
+        font.pointSize: 16
         clip: false
         currentIndex: swipeView.currentIndex
         TabButton {
@@ -74,6 +77,10 @@ ApplicationWindow {
         }
         TabButton {
             id: tab3
+            text: qsTr("Вылет")
+        }
+        TabButton {
+            id: tab4
             text: qsTr("Инфо")
         }
     }
