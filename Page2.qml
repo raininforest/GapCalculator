@@ -261,16 +261,13 @@ Page {
                 text:"Vразг. = "+Number(vR*3600/1000).toFixed(1)+ " км/ч
 Vо = "+Number(v0*3600/1000).toFixed(1)+" км/ч
 R вылета = "+Number(r).toFixed(1)+" м
+R вылета min = "+Number(rmin).toFixed(1)+" м
 Высота вылета = "+page.h_v+" м
 Длина вылета = " +Number(d_v).toFixed(1)+" м
 Угол вылета = "+page.angle_v+" град.
-------------------------------
+______________________
 Гэп = "+page.gap+" м
-Стол = "+page.table+" м
-------------------------------
-Высота призем. = "+page.h_p+" м
-Длина призем. = " +Number(d_p).toFixed(1)+" м
-Угол призем. = "+page.angle_p+" град."
+Стол = "+page.table+" м"
 
                 color: "white"
                 font.pointSize: 10
@@ -288,8 +285,13 @@ R вылета = "+Number(r).toFixed(1)+" м
             opacity: 0.6
             Text {
                 id: info2
-                text:"R вылета min = "+Number(rmin).toFixed(1)+" м
+                text:"Высота призем. = "+page.h_p+" м
+Длина призем. = " +Number(d_p).toFixed(1)+" м
+Угол призем. = "+page.angle_p+" град.
+______________________
+G призем. = "+Number(hg).toFixed(2)+" м.
 Высота разгонки = "+Number(hr).toFixed(1)+" м"
+
                 color: "white"
                 font.pointSize: 10
                 anchors.top: parent.top
