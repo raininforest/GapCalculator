@@ -118,7 +118,7 @@ Page{
         AreaSeries {
             id: v_ser
             name: "R расчет."
-            color: "gray"
+            color: "green"
             opacity: 0.8
             borderWidth: 0
             axisX: xvalueAxis2
