@@ -1,5 +1,5 @@
 QT += qml quick charts
-QT += androidextras
+#QT += androidextras
 
 CONFIG += c++11
 

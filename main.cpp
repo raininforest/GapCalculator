@@ -1,7 +1,7 @@
 #include <QtWidgets/QApplication>
 #include <QQmlApplicationEngine>
 #include <QDebug>
-#include <QtAndroid>
+//#include <QtAndroid>
 #include <QObject>
 #include "dirchecker.h"
 
@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
-    QtAndroid::hideSplashScreen();
+    //QtAndroid::hideSplashScreen();
     DirChecker drck;
     QObject *mainwindow = engine.rootObjects().at(0);
-    QtAndroid::requestPermissionsSync(QStringList({"android.permission.WRITE_EXTERNAL_STORAGE"}),5000);
+    //QtAndroid::requestPermissionsSync(QStringList({"android.permission.WRITE_EXTERNAL_STORAGE"}),5000);
     QObject::connect(mainwindow,SIGNAL(check()),&drck,SLOT(check()));
     return app.exec();
 }

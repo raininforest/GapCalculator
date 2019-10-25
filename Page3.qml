@@ -50,16 +50,16 @@ Page{
         legend.labelColor: "white"
         visible: chart_visible
 
-        MouseArea{
-            anchors.fill: parent
-            onDoubleClicked: {
-                check()
-                chartView2.grabToImage(function(result) {
-                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Vylet_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
-                });
-                appearence.running=true
-            }
-        }
+//        MouseArea{
+//            anchors.fill: parent
+//            onDoubleClicked: {
+//                check()
+//                chartView2.grabToImage(function(result) {
+//                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Vylet_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+//                });
+//                appearence.running=true
+//            }
+//        }
 
         Rectangle{
             id: black_background

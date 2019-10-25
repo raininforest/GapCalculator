@@ -238,16 +238,16 @@ Page {
         backgroundRoundness: 0
         legend.visible: false        
 
-        MouseArea{
-            anchors.fill: parent
-            onDoubleClicked: {
-                check()
-                chartView.grabToImage(function(result) {
-                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
-                });
-                appearence.running=true
-            }
-        }
+//        MouseArea{
+//            anchors.fill: parent
+//            onDoubleClicked: {
+//                check()
+//                chartView.grabToImage(function(result) {
+//                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+//                });
+//                appearence.running=true
+//            }
+//        }
 
         Rectangle{
             width: info.width+10
