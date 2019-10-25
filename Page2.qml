@@ -47,6 +47,7 @@ Page {
         var b=v0y/v0x+h_p/d_p
         var c=-(h_p+h_p*gap/d_p)+h_v
         var diskr=b*b-4*a*c
+        console.log("a=",a, "b=", b, "c=", c, "diskr=", diskr)
         if (diskr<0){
             console.log("Нет пересечения траектории с приземлением!", diskr)
             return 0
@@ -71,6 +72,18 @@ Page {
     }
 
     function update_series(){
+        d_p=Math.abs(h_p/Math.tan(angle_p))
+        if (h_p<0) {
+            minY=-Math.ceil(Math.abs(h_p))-2
+        }
+        else if (h_p==0){
+            minY=-1
+            d_p=Math.abs(minY/Math.tan(angle_p))
+        }
+        else {
+            minY=0
+        }
+
         if((gap>6)&(gap<20)){
             xvalueAxis.labelsFont.pointSize=8
             yvalueAxis.labelsFont.pointSize=8
@@ -104,15 +117,6 @@ Page {
 
         hr=vR*vR/(2*g)
 
-        if (h_p<0) {
-            minY=-Math.ceil(Math.abs(h_p))-2
-        }
-        else if (h_p==0){
-            minY=-1
-        }
-        else {
-            minY=0
-        }
 
         maxY=Math.ceil((Math.abs(minX)+maxX)/k_scale)-Math.abs(minY)-1
         page3.maxY=Math.ceil((d_v+1)/k_scale)-1
@@ -238,16 +242,16 @@ Page {
         backgroundRoundness: 0
         legend.visible: false        
 
-        MouseArea{
-            anchors.fill: parent
-            onDoubleClicked: {
-                check()
-                chartView.grabToImage(function(result) {
-                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
-                });
-                appearence.running=true
-            }
-        }
+//        MouseArea{
+//            anchors.fill: parent
+//            onDoubleClicked: {
+//                check()
+//                chartView.grabToImage(function(result) {
+//                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+//                });
+//                appearence.running=true
+//            }
+//        }
 
         Rectangle{
             width: info.width+10
@@ -265,7 +269,7 @@ R вылета min = "+Number(rmin).toFixed(1)+" м
 Высота вылета = "+page.h_v+" м
 Длина вылета = " +Number(d_v).toFixed(1)+" м
 Угол вылета = "+page.angle_v+" град.
-______________________
+
 Гэп = "+page.gap+" м
 Стол = "+page.table+" м"
 
@@ -285,10 +289,10 @@ ______________________
             opacity: 0.6
             Text {
                 id: info2
-                text:"Высота призем. = "+page.h_p+" м
+                text:"Уровень призем. = "+page.h_p+" м
 Длина призем. = " +Number(d_p).toFixed(1)+" м
 Угол призем. = "+page.angle_p+" град.
-______________________
+
 G призем. = "+Number(hg).toFixed(2)+" м.
 Высота разгонки = "+Number(hr).toFixed(1)+" м"
 
