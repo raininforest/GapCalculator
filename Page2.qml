@@ -194,6 +194,9 @@ Page {
 
             hg=find_root()
             console.log("Hg=",hg)
+//        if (h_p<=0) {
+//            d_p=0
+//        }
         if(xk>gap){
             if (hg>1) {
                 warning_label2.text="Приземление будет жестким.\n\nОно будет эквивалентно дропу на плоскость с высоты "+Number(hg).toFixed(2)+" м.
@@ -242,16 +245,16 @@ Page {
         backgroundRoundness: 0
         legend.visible: false        
 
-//        MouseArea{
-//            anchors.fill: parent
-//            onDoubleClicked: {
-//                check()
-//                chartView.grabToImage(function(result) {
-//                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
-//                });
-//                appearence.running=true
-//            }
-//        }
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: {
+                check()
+                chartView.grabToImage(function(result) {
+                    console.log("image saved: ",result.saveToFile("/storage/emulated/0/Pictures/GapCalculator/Gap_"+ Qt.formatDateTime(new Date(),'dd.MM.yyyy.hh.mm.ss') +".png"));
+                });
+                appearence.running=true
+            }
+        }
 
         Rectangle{
             width: info.width+10
