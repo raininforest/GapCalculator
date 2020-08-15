@@ -10,8 +10,8 @@ android {
         applicationId "gap.calculator"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 203
-        versionName "2.0 beta"
+        versionCode 204
+        versionName "2.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
