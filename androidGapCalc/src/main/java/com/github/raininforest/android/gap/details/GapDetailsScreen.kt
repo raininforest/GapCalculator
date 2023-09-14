@@ -88,7 +88,7 @@ fun ChartView(paddingValues: PaddingValues) {
     ) {
         Text(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxSize(),
             text = "График",
             style = MaterialTheme.typography.h1
         )
