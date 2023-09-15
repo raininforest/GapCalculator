@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -32,15 +33,23 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.raininforest.android.gap.common.NoData
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
+import com.github.raininforest.data.GapListRepository
+import com.github.raininforest.ui.list.GapListViewModel
+import com.github.raininforest.ui.list.data.GapListItem
+import com.github.raininforest.ui.list.data.GapListState
 
 private const val PADDING = 16
 private const val BUTTON_HEIGHT = 48
@@ -52,12 +61,15 @@ private const val BUTTON_STROKE_WIDTH = 1
 @Composable
 fun GapListScreen(
     onGapClicked: (gapId: String) -> Unit = {},
-    onAddClicked: () -> Unit = {}
+    onAddClicked: () -> Unit = {},
+    gapListViewModel: GapListViewModel = viewModel(factory = GapListVMFactory(gapListRepository = GapListRepository())) // todo inject this
 ) {
+    val gapListState by gapListViewModel.gapList.collectAsState()
     Scaffold(
         content = {
-            Surface(modifier = Modifier.fillMaxSize()) {
-                GapList(gapList = getExampleList(), onGapClicked = onGapClicked)
+            when (val currentState = gapListState) {
+                is GapListState.GapListData -> Data(currentState, onGapClicked)
+                else -> NoData()
             }
         },
         floatingActionButton = {
@@ -77,7 +89,14 @@ fun GapListScreen(
 }
 
 @Composable
-fun GapList(gapList: List<GapListItemUI>, onGapClicked: (gapId: String) -> Unit) {
+fun Data(currentState: GapListState.GapListData, onGapClicked: (gapId: String) -> Unit) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        GapList(gapList = currentState.gapList, onGapClicked = onGapClicked)
+    }
+}
+
+@Composable
+fun GapList(gapList: List<GapListItem>, onGapClicked: (gapId: String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(PADDING.dp),
         verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
@@ -92,11 +111,11 @@ fun GapList(gapList: List<GapListItemUI>, onGapClicked: (gapId: String) -> Unit)
 }
 
 @Composable
-fun GapListItem(item: GapListItemUI, onGapClicked: (gapId: String) -> Unit) {
+fun GapListItem(item: GapListItem, onGapClicked: (gapId: String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onGapClicked.invoke(item.id.toString()) })
+            .clickable(onClick = { onGapClicked.invoke(item.id) })
             .wrapContentHeight()
             .clip(RoundedCornerShape(size = ITEM_CORNER_RADIUS.dp))
             .background(color = MaterialTheme.colors.primary)
@@ -132,21 +151,6 @@ fun GapListItem(item: GapListItemUI, onGapClicked: (gapId: String) -> Unit) {
         }
     }
 }
-
-fun getExampleList() = listOf(
-    GapListItemUI(id = 1, title = "Untitled Gap 1", date = "12.02.2021 23:12"),
-    GapListItemUI(id = 2, title = "Untitled Gap 2", date = "12.02.2022 23:12"),
-    GapListItemUI(id = 3, title = "Untitled Gap 3", date = "12.02.2023 23:12"),
-    GapListItemUI(id = 4, title = "Untitled Gap 4", date = "12.02.2024 23:12"),
-    GapListItemUI(id = 5, title = "Untitled Gap 5", date = "12.02.2025 23:12"),
-    GapListItemUI(id = 6, title = "Untitled Gap 10", date = "11.02.2025 23:12")
-)
-
-data class GapListItemUI(
-    val id: Int = 0,
-    val title: String,
-    val date: String
-)
 
 @Preview(showBackground = true)
 @Composable

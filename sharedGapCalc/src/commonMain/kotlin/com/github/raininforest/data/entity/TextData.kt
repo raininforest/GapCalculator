@@ -1,4 +1,4 @@
-package com.github.raininforest.ui.details.data
+package com.github.raininforest.data.entity
 
 data class TextData(
     val inputGapParameters: List<String>,

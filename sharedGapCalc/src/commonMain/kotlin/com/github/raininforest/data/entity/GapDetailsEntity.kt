@@ -1,6 +1,6 @@
-package com.github.raininforest.ui.details.data
+package com.github.raininforest.data.entity
 
-data class GapDetailsModel(
+data class GapDetailsEntity(
     val gapTitle: String,
     val chartData: ChartData,
     val textData: TextData

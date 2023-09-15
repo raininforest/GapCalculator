@@ -1,6 +1,5 @@
 package com.github.raininforest.android.gap.details
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,34 +23,62 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.raininforest.android.gap.common.NoData
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
+import com.github.raininforest.data.GapDetailsRepository
+import com.github.raininforest.data.entity.ChartData
+import com.github.raininforest.data.entity.TextData
+import com.github.raininforest.ui.details.DetailsViewModel
+import com.github.raininforest.ui.details.data.GapDetailsState
 
 private const val PADDING = 16
 private const val BUTTON_HEIGHT = 48
 private const val BUTTON_STROKE_WIDTH = 2
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GapDetailsScreen(
     gapId: String?,
     onEditClicked: (gapId: String) -> Unit = {},
-    onBackClicked: () -> Unit = {}
+    onBackClicked: () -> Unit = {},
+    gapDetailsViewModel: DetailsViewModel = viewModel(factory = GapDetailsVMFactory(gapDetailsRepository = GapDetailsRepository())) // todo inject
 ) {
+    gapId?.let(gapDetailsViewModel::getGapDetails)
+    val gapDetailsState by gapDetailsViewModel.gapDetails.collectAsState()
+
+    val topBarTitle: String
+    val mainContentComposable: @Composable (paddingValues: PaddingValues) -> Unit
+    when (val currentState = gapDetailsState) {
+        is GapDetailsState.GapDetailsData -> {
+            topBarTitle = currentState.gapTitle
+            mainContentComposable = {
+                ChartView(
+                    paddingValues = it,
+                    chartData = currentState.chartData,
+                    textData = currentState.textData
+                )
+            }
+        }
+        else -> {
+            topBarTitle = ""
+            mainContentComposable = { NoData() }
+        }
+    }
+
     Scaffold(
-        modifier = Modifier,
         topBar = {
-            TopBar(onBackClicked = onBackClicked)
+            TopBar(onBackClicked = onBackClicked, topBarTitle)
         },
-        content = { paddingValues ->
-            ChartView(paddingValues = paddingValues)
-        },
+        content = mainContentComposable,
         bottomBar = {
             BottomBar(gapId = gapId, onEditClicked = onEditClicked)
         }
@@ -83,7 +110,7 @@ fun BottomBar(gapId: String?, onEditClicked: (gapId: String) -> Unit) {
 }
 
 @Composable
-fun ChartView(paddingValues: PaddingValues) {
+fun ChartView(paddingValues: PaddingValues, chartData: ChartData, textData: TextData) {
     Box(
         modifier = Modifier
             .padding(paddingValues)
@@ -100,7 +127,7 @@ fun ChartView(paddingValues: PaddingValues) {
 }
 
 @Composable
-fun TopBar(onBackClicked: () -> Unit) {
+fun TopBar(onBackClicked: () -> Unit, gapTitle: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -124,7 +151,7 @@ fun TopBar(onBackClicked: () -> Unit) {
             Icon(imageVector = Icons.Default.ArrowBack, "")
         }
         Text(
-            text = "Untitled gap 1",
+            text = gapTitle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
