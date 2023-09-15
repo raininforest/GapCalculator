@@ -3,6 +3,7 @@ package com.github.raininforest.android.gap.list
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -49,11 +50,14 @@ private const val BUTTON_STROKE_WIDTH = 1
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun GapListScreen() {
+fun GapListScreen(
+    onGapClicked: (gapId: String) -> Unit = {},
+    onAddClicked: () -> Unit = {}
+) {
     Scaffold(
         content = {
             Surface(modifier = Modifier.fillMaxSize()) {
-                GapList(gapList = getExampleList())
+                GapList(gapList = getExampleList(), onGapClicked = onGapClicked)
             }
         },
         floatingActionButton = {
@@ -61,7 +65,7 @@ fun GapListScreen() {
                 modifier = Modifier
                     .height(BUTTON_HEIGHT.dp)
                     .wrapContentWidth(),
-                onClick = { },
+                onClick = onAddClicked,
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
             ) {
@@ -73,7 +77,7 @@ fun GapListScreen() {
 }
 
 @Composable
-fun GapList(gapList: List<GapListItemUI>) {
+fun GapList(gapList: List<GapListItemUI>, onGapClicked: (gapId: String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(PADDING.dp),
         verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
@@ -82,16 +86,17 @@ fun GapList(gapList: List<GapListItemUI>) {
             items = gapList,
             key = { it.id }
         ) {
-            GapListItem(item = it)
+            GapListItem(item = it, onGapClicked = onGapClicked)
         }
     }
 }
 
 @Composable
-fun GapListItem(item: GapListItemUI) {
+fun GapListItem(item: GapListItemUI, onGapClicked: (gapId: String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = { onGapClicked.invoke(item.id.toString()) })
             .wrapContentHeight()
             .clip(RoundedCornerShape(size = ITEM_CORNER_RADIUS.dp))
             .background(color = MaterialTheme.colors.primary)

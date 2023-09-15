@@ -40,7 +40,7 @@ private const val ITEM_FIELD_WIDTH = 92
 private const val BUTTON_HEIGHT = 48
 
 @Composable
-fun GapEditScreen(gapId: Int) {
+fun GapEditScreen(gapId: String?, onApplyClicked: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -62,7 +62,7 @@ fun GapEditScreen(gapId: Int) {
                 modifier = Modifier
                     .height(BUTTON_HEIGHT.dp)
                     .fillMaxWidth(),
-                onClick = { },
+                onClick = onApplyClicked,
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
             ) {
@@ -116,6 +116,6 @@ fun GapEditItem(label: String, value: String) {
 @Composable
 fun GreetingPreview() {
     GapCalcTheme {
-        GapEditScreen(1)
+        GapEditScreen("1", {})
     }
 }

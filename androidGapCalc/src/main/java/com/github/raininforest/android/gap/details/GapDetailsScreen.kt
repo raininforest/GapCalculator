@@ -39,23 +39,27 @@ private const val BUTTON_STROKE_WIDTH = 2
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun GapDetailsScreen(gapId: Int) {
+fun GapDetailsScreen(
+    gapId: String?,
+    onEditClicked: (gapId: String) -> Unit = {},
+    onBackClicked: () -> Unit = {}
+) {
     Scaffold(
         modifier = Modifier,
         topBar = {
-            TopBar()
+            TopBar(onBackClicked = onBackClicked)
         },
-        content = {
-            ChartView(it)
+        content = { paddingValues ->
+            ChartView(paddingValues = paddingValues)
         },
         bottomBar = {
-            BottomBar()
+            BottomBar(gapId = gapId, onEditClicked = onEditClicked)
         }
     )
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(gapId: String?, onEditClicked: (gapId: String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -66,7 +70,7 @@ fun BottomBar() {
             modifier = Modifier
                 .height(BUTTON_HEIGHT.dp)
                 .fillMaxWidth(),
-            onClick = { },
+            onClick = { gapId?.let(onEditClicked) },
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
         ) {
@@ -96,7 +100,7 @@ fun ChartView(paddingValues: PaddingValues) {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(onBackClicked: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -104,7 +108,7 @@ fun TopBar() {
             .fillMaxWidth()
     ) {
         OutlinedButton(
-            onClick = {},
+            onClick = onBackClicked,
             shape = CircleShape,
             modifier = Modifier
                 .safeContentPadding()
@@ -149,6 +153,6 @@ fun TopBar() {
 @Composable
 fun GreetingPreview() {
     GapCalcTheme {
-        GapDetailsScreen(1)
+        GapDetailsScreen("1")
     }
 }
