@@ -5,7 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,7 +45,7 @@ import com.github.raininforest.android.gap.common.NoData
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
-import com.github.raininforest.data.GapListRepository
+import com.github.raininforest.di.Dependencies
 import com.github.raininforest.ui.list.GapListViewModel
 import com.github.raininforest.ui.list.data.GapListItem
 import com.github.raininforest.ui.list.data.GapListState
@@ -62,7 +61,9 @@ private const val BUTTON_STROKE_WIDTH = 1
 fun GapListScreen(
     onGapClicked: (gapId: String) -> Unit = {},
     onAddClicked: () -> Unit = {},
-    gapListViewModel: GapListViewModel = viewModel(factory = GapListVMFactory(gapListRepository = GapListRepository())) // todo inject this
+    gapListViewModel: GapListViewModel = viewModel(
+        factory = GapListVMFactory(gapListRepository = Dependencies.gapListRepository)
+    )
 ) {
     val gapListState by gapListViewModel.gapList.collectAsState()
     Scaffold(

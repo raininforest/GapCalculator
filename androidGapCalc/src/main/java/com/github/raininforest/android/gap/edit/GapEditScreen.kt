@@ -2,7 +2,6 @@ package com.github.raininforest.android.gap.edit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,7 +34,7 @@ import com.github.raininforest.android.gap.common.NoData
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
-import com.github.raininforest.data.GapEditRepository
+import com.github.raininforest.di.Dependencies
 import com.github.raininforest.ui.edit.GapEditViewModel
 import com.github.raininforest.ui.edit.data.GapEditState
 
@@ -51,7 +50,9 @@ private const val BUTTON_HEIGHT = 48
 fun GapEditScreen(
     gapId: String?,
     onApplyClicked: () -> Unit,
-    gapEditViewModel: GapEditViewModel = viewModel(factory = GapEditVMFactory(gapEditRepository = GapEditRepository())) // todo inject this
+    gapEditViewModel: GapEditViewModel = viewModel(
+        factory = GapEditVMFactory(gapEditRepository = Dependencies.gapEditRepository)
+    )
 ) {
     gapId?.let(gapEditViewModel::getEditParametersForGap)
     val gapEditState by gapEditViewModel.gapEdit.collectAsState()

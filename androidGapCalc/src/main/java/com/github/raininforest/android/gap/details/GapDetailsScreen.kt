@@ -35,9 +35,9 @@ import com.github.raininforest.android.gap.common.NoData
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
-import com.github.raininforest.data.GapDetailsRepository
 import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.TextData
+import com.github.raininforest.di.Dependencies
 import com.github.raininforest.ui.details.DetailsViewModel
 import com.github.raininforest.ui.details.data.GapDetailsState
 
@@ -50,7 +50,9 @@ fun GapDetailsScreen(
     gapId: String?,
     onEditClicked: (gapId: String) -> Unit = {},
     onBackClicked: () -> Unit = {},
-    gapDetailsViewModel: DetailsViewModel = viewModel(factory = GapDetailsVMFactory(gapDetailsRepository = GapDetailsRepository())) // todo inject
+    gapDetailsViewModel: DetailsViewModel = viewModel(
+        factory = GapDetailsVMFactory(gapDetailsRepository = Dependencies.gapDetailsRepository)
+    )
 ) {
     gapId?.let(gapDetailsViewModel::getGapDetails)
     val gapDetailsState by gapDetailsViewModel.gapDetails.collectAsState()
@@ -68,6 +70,7 @@ fun GapDetailsScreen(
                 )
             }
         }
+
         else -> {
             topBarTitle = ""
             mainContentComposable = { NoData() }
