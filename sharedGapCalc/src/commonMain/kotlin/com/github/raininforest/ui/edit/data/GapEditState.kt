@@ -2,6 +2,7 @@ package com.github.raininforest.ui.edit.data
 
 sealed class GapEditState {
     data class GapEditData(
+        val gapTitle: String,
         val gap: String,
         val table: String,
         val startHeight: String,

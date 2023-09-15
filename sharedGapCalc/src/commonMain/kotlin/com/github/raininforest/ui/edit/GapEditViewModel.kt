@@ -27,6 +27,7 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseV
 
     private fun GapEditEntity.toUiState() =
         GapEditState.GapEditData(
+            gapTitle = gapTitle,
             gap = gap,
             table = table,
             startHeight = startHeight,

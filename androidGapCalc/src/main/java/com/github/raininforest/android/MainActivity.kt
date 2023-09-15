@@ -63,6 +63,9 @@ fun Main() {
                 gapId = it.arguments?.getString(NavDestinations.GAP_EDIT.argument),
                 onApplyClicked = {
                     navController.popBackStack()
+                },
+                onBackClicked = {
+                    navController.popBackStack()
                 }
             )
         }

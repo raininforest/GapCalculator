@@ -6,6 +6,7 @@ class GapEditRepository {
     suspend fun gapEditParameters(gapId: String): GapEditEntity =
         // todo just for test
         GapEditEntity(
+            gapTitle = "Untitled gap 1",
             gap = "2.0",
             table = "2.0",
             startAngle = "22",

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class DetailsViewModel(private val gapDetailsRepository: GapDetailsRepository) : BaseViewModel() {
+class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository) : BaseViewModel() {
     private val _gapDetailsState = MutableStateFlow<GapDetailsState>(GapDetailsState.GapDetailsEmpty)
     val gapDetails: StateFlow<GapDetailsState>
         get() = _gapDetailsState
