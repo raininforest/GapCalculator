@@ -1,4 +1,4 @@
-package com.github.raininforest.ui.models.list
+package com.github.raininforest.ui.list.data
 
 data class GapListModel(
     val gapList: List<GapListItem>

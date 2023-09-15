@@ -1,4 +1,4 @@
-package com.github.raininforest.ui.models.edit
+package com.github.raininforest.ui.edit.data
 
 data class GapEditModel(
     val gap: String,

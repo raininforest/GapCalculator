@@ -1,4 +1,4 @@
-package com.github.raininforest.ui.models.details
+package com.github.raininforest.ui.details.data
 
 data class GapDetailsModel(
     val gapTitle: String,
