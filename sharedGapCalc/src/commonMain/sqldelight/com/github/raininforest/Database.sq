@@ -1,0 +1,46 @@
+CREATE TABLE gapTable(
+    id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL
+);
+
+CREATE TABLE gapParametersTable (
+    gap_id INTEGER NOT NULL,
+    gap_length TEXT NOT NULL,
+    table_length TEXT NOT NULL,
+    start_height TEXT NOT NULL,
+    start_angle TEXT NOT NULL,
+    end_height TEXT NOT NULL,
+    end_angle TEXT NOT NULL,
+    start_speed TEXT NOT NULL,
+    FOREIGN KEY (gap_id) REFERENCES gapTable (id) ON DELETE CASCADE
+);
+
+gapList:
+SELECT * FROM gapTable;
+
+gap:
+SELECT * FROM gapTable WHERE id = ?;
+
+insertGap:
+INSERT INTO gapTable VALUES ?;
+
+removeGap:
+DELETE FROM gapTable WHERE id = ?;
+
+insertGapParameters:
+INSERT INTO gapParametersTable VALUES ?;
+
+updateGapParameters:
+UPDATE gapParametersTable
+SET     gap_length = ?,
+        table_length = ?,
+        start_height = ?,
+        start_angle = ?,
+        end_height = ?,
+        end_angle = ?,
+        start_speed = ?
+WHERE gap_id = ?;
+
+gapParametersByGapId:
+SELECT * FROM gapParametersTable WHERE gap_id = ?;

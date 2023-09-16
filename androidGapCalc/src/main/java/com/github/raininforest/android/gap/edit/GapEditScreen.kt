@@ -48,7 +48,7 @@ private const val ITEM_FIELD_WIDTH = 92
 
 @Composable
 fun GapEditScreen(
-    gapId: String?,
+    gapId: Long?,
     onApplyClicked: () -> Unit = {},
     onBackClicked: () -> Unit = {},
     gapEditViewModel: GapEditViewModel = viewModel(
@@ -154,6 +154,6 @@ fun GapEditItem(label: String, value: String) {
 @Composable
 fun GreetingPreview() {
     GapCalcTheme {
-        GapEditScreen("1")
+        GapEditScreen(1)
     }
 }

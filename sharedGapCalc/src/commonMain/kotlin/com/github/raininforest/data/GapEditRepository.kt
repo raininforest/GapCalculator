@@ -1,18 +1,20 @@
 package com.github.raininforest.data
 
 import com.github.raininforest.data.entity.GapEditEntity
+import com.github.raininforest.db.DBSource
 
-class GapEditRepository {
-    suspend fun gapEditParameters(gapId: String): GapEditEntity =
+class GapEditRepository(private val dbSource: DBSource) {
+    suspend fun gapEditParameters(gapId: Long): GapEditEntity =
         // todo just for test
         GapEditEntity(
-            gapTitle = "Untitled gap 1",
             gap = "2.0",
             table = "2.0",
-            startAngle = "22",
             startHeight = "1.2",
-            finishAngle = "17",
+            startAngle = "22",
             finishHeight = "0.8",
-            startSpeed = "37.2"
+            finishAngle = "17",
+            startSpeed = "37.2",
         )
+
+    suspend fun gapTitle(gapId: Long): String = dbSource.getGap(gapId)?.title.orEmpty()
 }

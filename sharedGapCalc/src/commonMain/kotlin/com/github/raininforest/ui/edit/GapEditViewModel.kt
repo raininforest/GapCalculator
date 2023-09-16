@@ -16,16 +16,17 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseV
     val gapEdit: StateFlow<GapEditState>
         get() = _gapEditState
 
-    fun getEditParametersForGap(gapId: String) {
+    fun getEditParametersForGap(gapId: Long) {
         coroutineScope.launch(Dispatchers.IO) {
             val uiState = gapEditRepository.gapEditParameters(gapId)
+            val gapTitle = gapEditRepository.gapTitle(gapId)
             withContext(Dispatchers.Main) {
-                _gapEditState.value = uiState.toUiState()
+                _gapEditState.value = uiState.toUiState(gapTitle)
             }
         }
     }
 
-    private fun GapEditEntity.toUiState() =
+    private fun GapEditEntity.toUiState(gapTitle: String) =
         GapEditState.GapEditData(
             gapTitle = gapTitle,
             gap = gap,

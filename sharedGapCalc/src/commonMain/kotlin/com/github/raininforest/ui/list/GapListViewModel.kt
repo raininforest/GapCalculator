@@ -22,21 +22,26 @@ class GapListViewModel(
 
     init {
         coroutineScope.launch(Dispatchers.IO) {
-            val uiState = gapListRepository.gapList().toUiState()
+            val uiGapList = gapListRepository.gapList()
+                .toUiState()
             withContext(Dispatchers.Main) {
-                _gapListState.value = uiState
+                _gapListState.value = uiGapList
             }
         }
     }
 
     private fun List<GapListItemEntity>.toUiState(): GapListState =
-        GapListState.GapListData(
-            gapList = map {
-                GapListItem(
-                    id = it.id,
-                    title = it.title,
-                    date = it.date
-                )
-            }
-        )
+        if (this.isNotEmpty()) {
+            GapListState.GapListData(
+                gapList = map {
+                    GapListItem(
+                        id = it.id,
+                        title = it.title,
+                        date = it.date
+                    )
+                }
+            )
+        } else {
+            GapListState.GapListEmpty
+        }
 }

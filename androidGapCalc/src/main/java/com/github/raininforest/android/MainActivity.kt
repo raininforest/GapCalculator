@@ -57,10 +57,10 @@ fun Main() {
         }
         composable(
             route = "${NavDestinations.GAP_EDIT.link}/{${NavDestinations.GAP_EDIT.argument}}",
-            arguments = listOf(navArgument(NavDestinations.GAP_EDIT.argument) { type = NavType.StringType })
+            arguments = listOf(navArgument(NavDestinations.GAP_EDIT.argument) { type = NavType.LongType })
         ) {
             GapEditScreen(
-                gapId = it.arguments?.getString(NavDestinations.GAP_EDIT.argument),
+                gapId = it.arguments?.getLong(NavDestinations.GAP_EDIT.argument),
                 onApplyClicked = {
                     navController.popBackStack()
                 },

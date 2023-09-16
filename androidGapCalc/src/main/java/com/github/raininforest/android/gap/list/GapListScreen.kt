@@ -59,7 +59,7 @@ private const val BUTTON_STROKE_WIDTH = 1
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GapListScreen(
-    onGapClicked: (gapId: String) -> Unit = {},
+    onGapClicked: (gapId: Long) -> Unit = {},
     onAddClicked: () -> Unit = {},
     gapListViewModel: GapListViewModel = viewModel(
         factory = GapListVMFactory(gapListRepository = Dependencies.gapListRepository)
@@ -90,14 +90,14 @@ fun GapListScreen(
 }
 
 @Composable
-fun Data(currentState: GapListState.GapListData, onGapClicked: (gapId: String) -> Unit) {
+fun Data(currentState: GapListState.GapListData, onGapClicked: (gapId: Long) -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         GapList(gapList = currentState.gapList, onGapClicked = onGapClicked)
     }
 }
 
 @Composable
-fun GapList(gapList: List<GapListItem>, onGapClicked: (gapId: String) -> Unit) {
+fun GapList(gapList: List<GapListItem>, onGapClicked: (gapId: Long) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(PADDING.dp),
         verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
@@ -112,7 +112,7 @@ fun GapList(gapList: List<GapListItem>, onGapClicked: (gapId: String) -> Unit) {
 }
 
 @Composable
-fun GapListItem(item: GapListItem, onGapClicked: (gapId: String) -> Unit) {
+fun GapListItem(item: GapListItem, onGapClicked: (gapId: Long) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
