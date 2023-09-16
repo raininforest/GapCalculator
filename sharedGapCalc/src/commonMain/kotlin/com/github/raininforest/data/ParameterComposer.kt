@@ -17,11 +17,11 @@ class ParameterComposer {
                 "$START_SPEED = ${inputParameters.startSpeed} $KMH",
             ),
             outputGapParameters = listOf(
-                "$G_LANDING = ${outputParameters.gLanding} $METER",
-                "$R_START = ${outputParameters.rStart} $METER",
-                "$R_START_MIN = ${outputParameters.rStartMin} $METER",
-                "$H_WHERE_START = ${outputParameters.hToStart} $METER",
                 "$SPEED_0 = ${outputParameters.v0} $KMH",
+                "$R_START_MIN = ${outputParameters.rStartMin} $METER",
+                "$R_START = ${outputParameters.rStart} $METER",
+                "$H_WHERE_START = ${outputParameters.hToStart} $METER",
+                "$G_LANDING = ${outputParameters.gLanding} $METER",
             )
         )
     }

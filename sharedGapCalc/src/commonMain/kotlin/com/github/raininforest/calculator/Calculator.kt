@@ -12,7 +12,7 @@ interface Calculator {
 internal class CalculatorImpl: Calculator {
     override suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult {
         return CalculationResult( // todo
-            outputParameters = OutputParameters("", "", "", "", ""),
+            outputParameters = OutputParameters("20.0", "12", "13", "1", "6.7"),
             chartData = ChartData(emptyList())
         )
     }
