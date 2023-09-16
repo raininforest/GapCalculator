@@ -89,12 +89,7 @@ fun ChartView(paddingValues: PaddingValues, chartData: ChartData, textData: Text
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            modifier = Modifier
-                .fillMaxSize(),
-            text = "График",
-            style = MaterialTheme.typography.h1
-        )
+        // todo chart from lib
     }
 }
 

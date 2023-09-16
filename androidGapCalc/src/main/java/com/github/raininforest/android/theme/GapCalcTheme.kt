@@ -26,14 +26,14 @@ fun GapCalcTheme(
 ) {
     val colors = if (darkTheme) {
         darkColors(
-            primary = darkGray,
-            secondary = darkGray,
-            onPrimary = whiteGray,
-            onSecondary = whiteGray,
-            surface = lightGray,
-            background = lightGray,
-            onBackground = darkGray,
-            onSurface = darkGray
+            primary = lightGray,
+            secondary = lightGray,
+            onPrimary = darkGray,
+            onSecondary = darkGray,
+            surface = darkestGray,
+            background = darkestGray,
+            onBackground = lightGray,
+            onSurface = lightGray
         )
     } else {
         lightColors(
@@ -69,8 +69,10 @@ fun GapCalcTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colors.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = darkestGray.toArgb()
+
+            val insetController = WindowCompat.getInsetsController(window, view)
+            insetController.isAppearanceLightStatusBars = false
         }
     }
 

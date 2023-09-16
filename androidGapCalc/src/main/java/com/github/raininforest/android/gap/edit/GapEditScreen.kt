@@ -29,8 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.raininforest.android.gap.common.BottomBar
 import com.github.raininforest.android.gap.common.TopBar
@@ -111,7 +113,7 @@ fun Data(gapEditViewModel: GapEditViewModel) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .padding(all = PADDING.dp)
+                .padding(horizontal = PADDING.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
         ) {
@@ -136,7 +138,7 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
             .height(ITEM_HEIGHT.dp)
             .clip(shape = RoundedCornerShape(ITEM_CORNER_RADIUS.dp))
             .fillMaxWidth()
-            .background(whiteGray),
+            .background(MaterialTheme.colors.onPrimary),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -145,7 +147,9 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
                 .width(ITEM_LABEL_WIDTH.dp),
             color = MaterialTheme.colors.primary,
             text = label,
-            style = MaterialTheme.typography.body2
+            style = MaterialTheme.typography.body2.copy(fontSize = 20.sp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.weight(1f))
 
@@ -161,13 +165,13 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
                 onValueChange = {
                     vmState.value = it
                 },
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End, fontSize = 28.sp),
                 colors = TextFieldDefaults.textFieldColors(
                     textColor = MaterialTheme.colors.primary,
                     cursorColor = MaterialTheme.colors.primary,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    backgroundColor = whiteGray
+                    backgroundColor = MaterialTheme.colors.onPrimary
                 ),
             )
         }

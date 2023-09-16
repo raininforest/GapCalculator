@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -162,42 +163,45 @@ fun GapListItemView(
     onGapClicked: (gapId: Long) -> Unit,
     onGapRemoveClicked: (gapId: Long) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = { onGapClicked.invoke(item.id) })
-            .wrapContentHeight()
-            .clip(RoundedCornerShape(size = ITEM_CORNER_RADIUS.dp))
-            .background(color = MaterialTheme.colors.primary)
-            .padding(all = PADDING.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            Text(
-                text = item.title,
-                color = MaterialTheme.colors.onPrimary,
-                style = MaterialTheme.typography.body1
-            )
-            Text(
-                text = item.date,
-                color = MaterialTheme.colors.onPrimary,
-                style = MaterialTheme.typography.body2
-            )
-        }
-        Spacer(
+    val shape = RoundedCornerShape(size = ITEM_CORNER_RADIUS.dp)
+    Card(shape = shape) {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .background(Color.Red)
-        )
-        OutlinedButton(
-            onClick = { onGapRemoveClicked(item.id) },
-            shape = CircleShape,
-            modifier = Modifier.size(BUTTON_HEIGHT.dp),
-            contentPadding = PaddingValues(0.dp),
-            border = BorderStroke(BUTTON_STROKE_WIDTH.dp, MaterialTheme.colors.onPrimary),
-            colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colors.onPrimary)
+                .fillMaxWidth()
+                .clickable(onClick = { onGapClicked.invoke(item.id) })
+                .wrapContentHeight()
+                .clip(shape)
+                .background(color = MaterialTheme.colors.onPrimary)
+                .padding(all = PADDING.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = Icons.Default.Clear, "")
+            Column {
+                Text(
+                    text = item.title,
+                    color = MaterialTheme.colors.primary,
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = item.date,
+                    color = MaterialTheme.colors.primary,
+                    style = MaterialTheme.typography.body2
+                )
+            }
+            Spacer(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.Red)
+            )
+            OutlinedButton(
+                onClick = { onGapRemoveClicked(item.id) },
+                shape = CircleShape,
+                modifier = Modifier.size(BUTTON_HEIGHT.dp),
+                contentPadding = PaddingValues(0.dp),
+                border = BorderStroke(BUTTON_STROKE_WIDTH.dp, MaterialTheme.colors.onPrimary),
+                colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colors.onPrimary)
+            ) {
+                Icon(imageVector = Icons.Default.Clear, "")
+            }
         }
     }
 }
