@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.raininforest.android.gap.common.BottomBar
@@ -26,14 +27,14 @@ import com.github.raininforest.ui.details.data.GapDetailsState
 
 @Composable
 fun GapDetailsScreen(
-    gapId: String?,
-    onEditClicked: (gapId: String?) -> Unit = {},
+    gapId: Long?,
+    onEditClicked: (gapId: Long?) -> Unit = {},
     onBackClicked: () -> Unit = {},
     gapDetailsViewModel: GapDetailsViewModel = viewModel(
         factory = GapDetailsVMFactory(gapDetailsRepository = Dependencies.gapDetailsRepository)
     )
 ) {
-    gapId?.let(gapDetailsViewModel::getGapDetails)
+    gapId?.let(gapDetailsViewModel::fetchGapDetails)
     val gapDetailsState by gapDetailsViewModel.gapDetails.collectAsState()
 
     val topBarTitle: String
@@ -60,7 +61,14 @@ fun GapDetailsScreen(
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
-                title = topBarTitle
+                titleComposable = { modifier ->
+                    Text(
+                        text = topBarTitle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = modifier
+                    )
+                }
             )
         },
         content = mainContentComposable,
@@ -94,6 +102,6 @@ fun ChartView(paddingValues: PaddingValues, chartData: ChartData, textData: Text
 @Composable
 fun GreetingPreview() {
     GapCalcTheme {
-        GapDetailsScreen("1")
+        GapDetailsScreen(1)
     }
 }

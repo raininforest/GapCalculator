@@ -1,17 +1,33 @@
 package com.github.raininforest.data
 
+import com.github.raininforest.calculator.Calculator
 import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.GapDetailsEntity
 import com.github.raininforest.data.entity.TextData
 import com.github.raininforest.db.DBSource
 
-class GapDetailsRepository(dbSource: DBSource) {
-    suspend fun getGapDetails(gapId: String): GapDetailsEntity {
-        //todo just for test
+class GapDetailsRepository(
+    private val dbSource: DBSource,
+    private val calculator: Calculator,
+    private val parameterComposer: ParameterComposer
+) {
+    suspend fun getGapDetails(gapId: Long): GapDetailsEntity {
+        val gapTitle = dbSource.getGap(gapId = gapId)?.title.orEmpty()
+        val gapInputParameters = dbSource.getGapParameters(gapId) ?: return dummyGapDetails
+        val calculationResult = calculator.calculate(gapInputParameters)
+        val gapOutputParameters = calculationResult.outputParameters
+
         return GapDetailsEntity(
-            gapTitle = "Untitled gap 1 test",
+            gapTitle = gapTitle,
+            chartData = calculationResult.chartData,
+            textData = parameterComposer.composeParameters(gapInputParameters, gapOutputParameters)
+        )
+    }
+
+    private val dummyGapDetails: GapDetailsEntity
+        get() = GapDetailsEntity(
+            gapTitle = "",
             chartData = ChartData(emptyList()),
             textData = TextData(emptyList(), emptyList())
         )
-    }
 }

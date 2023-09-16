@@ -1,6 +1,6 @@
 package com.github.raininforest.data.entity
 
-data class GapEditEntity(
+data class GapParametersEntity(
     val gap: String,
     val table: String,
     val startHeight: String,

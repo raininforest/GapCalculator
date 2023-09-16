@@ -1,9 +1,9 @@
 package com.github.raininforest.android.gap.edit
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,13 +31,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.raininforest.android.gap.common.BottomBar
-import com.github.raininforest.android.gap.common.NoData
 import com.github.raininforest.android.gap.common.TopBar
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.whiteGray
+import com.github.raininforest.data.DEGREE
+import com.github.raininforest.data.FINISH_ANGLE
+import com.github.raininforest.data.FINISH_HEIGHT
+import com.github.raininforest.data.GAP
+import com.github.raininforest.data.KMH
+import com.github.raininforest.data.METER
+import com.github.raininforest.data.START_ANGLE
+import com.github.raininforest.data.START_HEIGHT
+import com.github.raininforest.data.START_SPEED
+import com.github.raininforest.data.TABLE
 import com.github.raininforest.di.Dependencies
 import com.github.raininforest.ui.edit.GapEditViewModel
-import com.github.raininforest.ui.edit.data.GapEditState
+import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val PADDING = 16
 private const val ITEM_SPACING = 8
@@ -46,6 +55,7 @@ private const val ITEM_CORNER_RADIUS = 32
 private const val ITEM_LABEL_WIDTH = 192
 private const val ITEM_FIELD_WIDTH = 92
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GapEditScreen(
     gapId: Long?,
@@ -55,36 +65,34 @@ fun GapEditScreen(
         factory = GapEditVMFactory(gapEditRepository = Dependencies.gapEditRepository)
     )
 ) {
-    gapId?.let(gapEditViewModel::getEditParametersForGap)
-    val gapEditState by gapEditViewModel.gapEdit.collectAsState()
+    gapId?.let(gapEditViewModel::fetchGapParameters)
 
-    val topBarTitle: String
-    val mainContentComposable: @Composable (paddingValues: PaddingValues) -> Unit
-    when (val currentState = gapEditState) {
-        is GapEditState.GapEditData -> {
-            topBarTitle = currentState.gapTitle
-            mainContentComposable = {
-                Data(currentState)
-            }
-        }
-
-        else -> {
-            topBarTitle = ""
-            mainContentComposable = { NoData() }
-        }
-    }
     Scaffold(
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
-                title = topBarTitle,
+                titleComposable = { modifier ->
+                    val gapTitleState by gapEditViewModel.gapTitleState.collectAsState()
+                    OutlinedTextField(
+                        value = gapTitleState,
+                        onValueChange = { newText ->
+                            gapEditViewModel.gapTitleChanged(newText)
+                        },
+                        modifier = modifier
+                    )
+                },
                 hasShare = false
             )
         },
-        content = mainContentComposable,
+        content = {
+            Data(gapEditViewModel)
+        },
         bottomBar = {
             BottomBar(
-                onButtonClicked = onApplyClicked,
+                onButtonClicked = {
+                    gapEditViewModel.onApplyClicked()
+                    onApplyClicked.invoke()
+                },
                 buttonText = "Применить"
             )
         }
@@ -92,7 +100,7 @@ fun GapEditScreen(
 }
 
 @Composable
-fun Data(currentState: GapEditState.GapEditData) {
+fun Data(gapEditViewModel: GapEditViewModel) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -100,13 +108,14 @@ fun Data(currentState: GapEditState.GapEditData) {
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
         ) {
-            GapEditItem(label = "Гэп, м", value = currentState.gap)
-            GapEditItem(label = "Стол, м", value = currentState.table)
-            GapEditItem(label = "Высота вылета, м", value = currentState.startHeight)
-            GapEditItem(label = "Угол вылета, град", value = currentState.startAngle)
-            GapEditItem(label = "Высота приземления, м", value = currentState.finishHeight)
-            GapEditItem(label = "Угол приземления, град", value = currentState.finishAngle)
-            GapEditItem(label = "Скорость разгона, км/ч", value = currentState.startSpeed)
+
+            GapEditItem(label = "$GAP, $METER", vmState = gapEditViewModel.gapState)
+            GapEditItem(label = "$TABLE, $METER", vmState = gapEditViewModel.tableState)
+            GapEditItem(label = "$START_HEIGHT, $METER", vmState = gapEditViewModel.startHeightState)
+            GapEditItem(label = "$START_ANGLE, $DEGREE", vmState = gapEditViewModel.startAngleState)
+            GapEditItem(label = "$FINISH_HEIGHT, $METER", vmState = gapEditViewModel.finishHeightState)
+            GapEditItem(label = "$FINISH_ANGLE, $DEGREE", vmState = gapEditViewModel.finishAngleState)
+            GapEditItem(label = "$START_SPEED, $KMH", vmState = gapEditViewModel.startSpeedState)
 
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -114,7 +123,7 @@ fun Data(currentState: GapEditState.GapEditData) {
 }
 
 @Composable
-fun GapEditItem(label: String, value: String) {
+fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
     Row(
         modifier = Modifier
             .height(ITEM_HEIGHT.dp)
@@ -132,12 +141,16 @@ fun GapEditItem(label: String, value: String) {
             style = MaterialTheme.typography.body2
         )
         Spacer(modifier = Modifier.weight(1f))
+
+        val state by vmState.collectAsState()
         OutlinedTextField(
             modifier = Modifier
                 .padding(end = PADDING.dp)
                 .width(ITEM_FIELD_WIDTH.dp),
-            value = value,
-            onValueChange = {},
+            value = state,
+            onValueChange = {
+                vmState.value = it
+            },
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.primary,

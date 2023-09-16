@@ -35,18 +35,15 @@ fun Main() {
             GapListScreen(
                 onGapClicked = { gapId ->
                     navController.navigate("${NavDestinations.GAP_DETAILS.link}/$gapId")
-                },
-                onAddClicked = {
-                    navController.navigate("${NavDestinations.GAP_DETAILS.link}/new")
                 }
             )
         }
         composable(
             route = "${NavDestinations.GAP_DETAILS.link}/{${NavDestinations.GAP_DETAILS.argument}}",
-            arguments = listOf(navArgument(NavDestinations.GAP_DETAILS.argument) { type = NavType.StringType })
+            arguments = listOf(navArgument(NavDestinations.GAP_DETAILS.argument) { type = NavType.LongType })
         ) {
             GapDetailsScreen(
-                gapId = it.arguments?.getString(NavDestinations.GAP_DETAILS.argument),
+                gapId = it.arguments?.getLong(NavDestinations.GAP_DETAILS.argument),
                 onEditClicked = { gapId ->
                     navController.navigate("${NavDestinations.GAP_EDIT.link}/$gapId")
                 },

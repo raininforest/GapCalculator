@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
@@ -49,14 +48,15 @@ fun NoData() {
 @Composable
 fun TopBar(
     onBackClicked: () -> Unit,
-    title: String,
+    titleComposable: @Composable (modifier: Modifier) -> Unit,
     hasShare: Boolean = true
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(all = PADDING.dp)
+            .padding(start = PADDING.dp, end = PADDING.dp, bottom = PADDING.dp)
             .fillMaxWidth()
+            .height(72.dp)
     ) {
         OutlinedButton(
             onClick = onBackClicked,
@@ -74,12 +74,8 @@ fun TopBar(
         ) {
             Icon(imageVector = Icons.Default.ArrowBack, "")
         }
-        Text(
-            text = title,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
-        )
+
+        titleComposable(Modifier.weight(1f))
 
         if (!hasShare) return
 

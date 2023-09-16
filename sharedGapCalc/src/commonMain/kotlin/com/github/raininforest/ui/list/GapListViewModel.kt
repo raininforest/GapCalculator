@@ -22,11 +22,34 @@ class GapListViewModel(
 
     init {
         coroutineScope.launch(Dispatchers.IO) {
-            val uiGapList = gapListRepository.gapList()
-                .toUiState()
-            withContext(Dispatchers.Main) {
-                _gapListState.value = uiGapList
-            }
+            updateList()
+        }
+    }
+
+    fun removeGapClicked(id: Long) {
+        coroutineScope.launch(Dispatchers.IO) {
+            gapListRepository.removeGap(id)
+            updateList()
+        }
+    }
+
+    fun addClicked() {
+        coroutineScope.launch(Dispatchers.IO) {
+            gapListRepository.addGap()
+            updateList()
+        }
+    }
+
+    fun fetchList() {
+        coroutineScope.launch(Dispatchers.IO) {
+            updateList()
+        }
+    }
+
+    private suspend fun updateList() {
+        val uiGapList = gapListRepository.gapList().toUiState()
+        withContext(Dispatchers.Main) {
+            _gapListState.value = uiGapList
         }
     }
 

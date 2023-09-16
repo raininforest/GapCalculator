@@ -16,19 +16,23 @@ class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository
     val gapDetails: StateFlow<GapDetailsState>
         get() = _gapDetailsState
 
-    fun getGapDetails(gapId: String) {
+    fun fetchGapDetails(gapId: Long) {
         coroutineScope.launch(Dispatchers.IO) {
-            val uiState = gapDetailsRepository.getGapDetails(gapId)
+            val gapDetailsUi = gapDetailsRepository.getGapDetails(gapId)
             withContext(Dispatchers.Main) {
-                _gapDetailsState.value = uiState.toUiState()
+                _gapDetailsState.value = gapDetailsUi.toUiState()
             }
         }
     }
 
     private fun GapDetailsEntity.toUiState(): GapDetailsState =
-        GapDetailsState.GapDetailsData(
-            gapTitle = gapTitle,
-            chartData = chartData,
-            textData = textData
-        )
+        if (false) { // todo if (this.chartData.charts.isEmpty())
+            GapDetailsState.GapDetailsEmpty
+        } else {
+            GapDetailsState.GapDetailsData(
+                gapTitle = gapTitle,
+                chartData = chartData,
+                textData = textData
+            )
+        }
 }

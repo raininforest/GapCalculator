@@ -22,6 +22,9 @@ SELECT * FROM gapTable;
 gap:
 SELECT * FROM gapTable WHERE id = ?;
 
+updateGapTitle:
+UPDATE gapTable SET title = ? WHERE id = ?;
+
 insertGap:
 INSERT INTO gapTable VALUES ?;
 

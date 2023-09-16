@@ -60,59 +60,108 @@ private const val BUTTON_STROKE_WIDTH = 1
 @Composable
 fun GapListScreen(
     onGapClicked: (gapId: Long) -> Unit = {},
-    onAddClicked: () -> Unit = {},
     gapListViewModel: GapListViewModel = viewModel(
         factory = GapListVMFactory(gapListRepository = Dependencies.gapListRepository)
     )
 ) {
+    gapListViewModel.fetchList() // todo сделать swipe refresh
+
     val gapListState by gapListViewModel.gapList.collectAsState()
+
     Scaffold(
         content = {
-            when (val currentState = gapListState) {
-                is GapListState.GapListData -> Data(currentState, onGapClicked)
-                else -> NoData()
-            }
+            Content(
+                gapListState = gapListState,
+                onGapClicked = onGapClicked,
+                onGapRemoveClicked = gapListViewModel::removeGapClicked
+            )
         },
         floatingActionButton = {
-            Button(
-                modifier = Modifier
-                    .height(BUTTON_HEIGHT.dp)
-                    .wrapContentWidth(),
-                onClick = onAddClicked,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
-            ) {
-                Text(text = "Добавить")
-            }
+            FloatingButton(onAddClicked = gapListViewModel::addClicked)
         },
         floatingActionButtonPosition = FabPosition.Center
     )
 }
 
 @Composable
-fun Data(currentState: GapListState.GapListData, onGapClicked: (gapId: Long) -> Unit) {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        GapList(gapList = currentState.gapList, onGapClicked = onGapClicked)
+fun Content(
+    gapListState: GapListState,
+    onGapClicked: (gapId: Long) -> Unit,
+    onGapRemoveClicked: (gapId: Long) -> Unit
+) {
+
+    when (gapListState) {
+        is GapListState.GapListData -> Data(
+            currentState = gapListState,
+            onGapClicked = onGapClicked,
+            onGapRemoveClicked = onGapRemoveClicked
+        )
+
+        else -> NoData()
     }
 }
 
 @Composable
-fun GapList(gapList: List<GapListItem>, onGapClicked: (gapId: Long) -> Unit) {
+fun FloatingButton(onAddClicked: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .height(BUTTON_HEIGHT.dp)
+            .wrapContentWidth(),
+        onClick = onAddClicked,
+        shape = RoundedCornerShape(50),
+        colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
+    ) {
+        Text(
+            text = "Добавить",
+            style = MaterialTheme.typography.body1
+        )
+    }
+}
+
+@Composable
+fun Data(
+    currentState: GapListState.GapListData,
+    onGapClicked: (gapId: Long) -> Unit,
+    onGapRemoveClicked: (gapId: Long) -> Unit
+) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        GapList(
+            gapList = currentState.gapList,
+            onGapClicked = onGapClicked,
+            onGapRemoveClicked = onGapRemoveClicked
+        )
+    }
+}
+
+@Composable
+fun GapList(
+    gapList: List<GapListItem>,
+    onGapClicked: (gapId: Long) -> Unit,
+    onGapRemoveClicked: (gapId: Long) -> Unit
+) {
     LazyColumn(
         contentPadding = PaddingValues(PADDING.dp),
         verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
     ) {
         items(
             items = gapList,
-            key = { it.id }
-        ) {
-            GapListItem(item = it, onGapClicked = onGapClicked)
+            key = { gapListItem -> gapListItem.id }
+        ) { gapListItem ->
+            GapListItemView(
+                item = gapListItem,
+                onGapClicked = onGapClicked,
+                onGapRemoveClicked = onGapRemoveClicked
+            )
         }
     }
 }
 
 @Composable
-fun GapListItem(item: GapListItem, onGapClicked: (gapId: Long) -> Unit) {
+fun GapListItemView(
+    item: GapListItem,
+    onGapClicked: (gapId: Long) -> Unit,
+    onGapRemoveClicked: (gapId: Long) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,7 +190,7 @@ fun GapListItem(item: GapListItem, onGapClicked: (gapId: Long) -> Unit) {
                 .background(Color.Red)
         )
         OutlinedButton(
-            onClick = {},
+            onClick = { onGapRemoveClicked(item.id) },
             shape = CircleShape,
             modifier = Modifier.size(BUTTON_HEIGHT.dp),
             contentPadding = PaddingValues(0.dp),
