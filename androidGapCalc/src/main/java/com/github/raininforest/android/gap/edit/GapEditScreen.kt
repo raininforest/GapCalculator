@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -20,6 +21,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.raininforest.android.gap.common.BottomBar
 import com.github.raininforest.android.gap.common.TopBar
 import com.github.raininforest.android.theme.GapCalcTheme
+import com.github.raininforest.android.theme.customTextSelectionColors
 import com.github.raininforest.android.theme.whiteGray
 import com.github.raininforest.data.DEGREE
 import com.github.raininforest.data.FINISH_ANGLE
@@ -72,14 +75,18 @@ fun GapEditScreen(
             TopBar(
                 onBackClicked = onBackClicked,
                 titleComposable = { modifier ->
-                    val gapTitleState by gapEditViewModel.gapTitleState.collectAsState()
-                    OutlinedTextField(
-                        value = gapTitleState,
-                        onValueChange = { newText ->
-                            gapEditViewModel.gapTitleChanged(newText)
-                        },
-                        modifier = modifier
-                    )
+                    CompositionLocalProvider(
+                        LocalTextSelectionColors provides customTextSelectionColors,
+                    ) {
+                        val gapTitleState by gapEditViewModel.gapTitleState.collectAsState()
+                        OutlinedTextField(
+                            value = gapTitleState,
+                            onValueChange = { newText ->
+                                gapEditViewModel.gapTitleChanged(newText)
+                            },
+                            modifier = modifier
+                        )
+                    }
                 },
                 hasShare = false
             )
@@ -142,24 +149,28 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
         )
         Spacer(modifier = Modifier.weight(1f))
 
-        val state by vmState.collectAsState()
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(end = PADDING.dp)
-                .width(ITEM_FIELD_WIDTH.dp),
-            value = state,
-            onValueChange = {
-                vmState.value = it
-            },
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary,
-                cursorColor = MaterialTheme.colors.primary,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                backgroundColor = whiteGray
+        CompositionLocalProvider(
+            LocalTextSelectionColors provides customTextSelectionColors,
+        ) {
+            val state by vmState.collectAsState()
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(end = PADDING.dp)
+                    .width(ITEM_FIELD_WIDTH.dp),
+                value = state,
+                onValueChange = {
+                    vmState.value = it
+                },
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = MaterialTheme.colors.primary,
+                    cursorColor = MaterialTheme.colors.primary,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    backgroundColor = whiteGray
+                ),
             )
-        )
+        }
     }
 }
 
