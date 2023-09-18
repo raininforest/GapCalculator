@@ -1,9 +1,9 @@
 package com.github.raininforest.data.entity
 
 data class OutputParameters(
-    val v0: String,
-    val rStartMin: String,
-    val rStart: String,
-    val gLanding: String,
-    val hToStart: String
+    val v0: Double,
+    val rStartMin: Double,
+    val rStart: Double,
+    val gLanding: Double,
+    val hToStart: Double
 )
