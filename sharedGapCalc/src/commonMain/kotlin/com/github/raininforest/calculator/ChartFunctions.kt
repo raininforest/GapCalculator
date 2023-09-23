@@ -11,6 +11,6 @@ internal fun flightFx(x: Double, v0x: Double, v0y: Double): Double {
     }
 }
 
-internal fun startCircleFx(x: Double, radius: Double, startLength: Double): Double {
-    return -sqrt(radius * radius - (x + startLength).pow(2)) + radius
+internal fun startCircleFx(x: Double, radius: Double, xRange: Double): Double {
+    return -sqrt(radius * radius - (x + xRange).pow(2)) + radius
 }
