@@ -1,7 +1,7 @@
 package com.github.raininforest.data.entity
 
 data class Chart(
-    val hexColor: String,
-    val thicknessPx: Int,
+    val chartConfig: ChartConfig,
     val function: List<Point>
 )
+
