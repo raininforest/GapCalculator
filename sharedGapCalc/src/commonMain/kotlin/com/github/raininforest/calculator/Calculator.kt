@@ -4,12 +4,18 @@ import com.github.raininforest.data.entity.CalculationResult
 import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.data.entity.OutputParameters
+import com.github.raininforest.data.entity.CalculationWarnings
 
 interface Calculator {
     suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult
 }
 
 internal class CalculatorImpl : Calculator {
+
+    private companion object {
+        const val BIG_GAP = 4
+        const val HARD_LANDING_G = 1
+    }
 
     override suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult {
         val inputParams = gapInputParameters.convertToSINumbers()
@@ -35,10 +41,6 @@ internal class CalculatorImpl : Calculator {
             finishAngle = inputParams.finishAngleInRads
         )
 
-        //todo реакция на плохие параметры приземления
-
-        //todo реакция на большой gap>6
-
         //todo рассчитать данные для графиков
         //1. строим вылет (обычный с радиусом или дроп с уклоном или прямой)
         //2. приземление (обычное под углом или горизонтальное с ограничением по длине)
@@ -53,9 +55,25 @@ internal class CalculatorImpl : Calculator {
             hToStart = hR
         )
 
+        val warnings = createWarningsIfNeed(
+            inputParams = inputParams,
+            landingParams = landingParams
+        )
+
         return CalculationResult(
             outputParameters = outputParameters,
-            chartData = ChartData(emptyList()) //todo
+            chartData = ChartData(emptyList()),
+            warnings = warnings
         )
+    }
+
+    private fun createWarningsIfNeed(inputParams: InputParametersInSI, landingParams: LandingParams): List<CalculationWarnings> {
+        val resultList = mutableListOf<CalculationWarnings>()
+        when {
+            inputParams.gapLengthInMeters > BIG_GAP -> resultList.add(CalculationWarnings.BIG_GAP)
+            landingParams.landingPoint > inputParams.gapLengthInMeters -> resultList.add(CalculationWarnings.EARLY_LANDING)
+            landingParams.gLanding > HARD_LANDING_G -> resultList.add(CalculationWarnings.HARD_LANDING)
+        }
+        return resultList
     }
 }
