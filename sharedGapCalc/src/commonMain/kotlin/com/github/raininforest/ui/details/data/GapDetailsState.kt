@@ -7,7 +7,8 @@ sealed class GapDetailsState {
     data class GapDetailsData(
         val gapTitle: String,
         val chartData: ChartData,
-        val textData: TextData
+        val textData: TextData,
+        val warnings: List<String>
     ) : GapDetailsState()
 
     data object GapDetailsEmpty: GapDetailsState()

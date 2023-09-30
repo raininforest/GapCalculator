@@ -138,11 +138,11 @@ internal fun createWarningsIfNeed(
     landingParams: LandingParams
 ): List<CalculationWarnings> {
     val resultList = mutableListOf<CalculationWarnings>()
-    when {
-        inParams.gapLengthInMeters > BIG_GAP -> resultList.add(CalculationWarnings.BIG_GAP)
-        landingParams.landingPoint > inParams.gapLengthInMeters -> resultList.add(CalculationWarnings.EARLY_LANDING)
-        landingParams.gLanding > HARD_LANDING_G -> resultList.add(CalculationWarnings.HARD_LANDING)
-    }
+
+    if (inParams.gapLengthInMeters > BIG_GAP) resultList.add(CalculationWarnings.BIG_GAP)
+    if (landingParams.landingPoint < inParams.gapLengthInMeters) resultList.add(CalculationWarnings.EARLY_LANDING)
+    if (landingParams.gLanding > HARD_LANDING_G) resultList.add(CalculationWarnings.HARD_LANDING)
+
     return resultList
 }
 

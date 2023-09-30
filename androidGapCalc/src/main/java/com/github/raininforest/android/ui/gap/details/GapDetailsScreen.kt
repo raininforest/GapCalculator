@@ -2,10 +2,15 @@ package com.github.raininforest.android.ui.gap.details
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +42,7 @@ fun GapDetailsScreen(
 
     val topBarTitle: String
     val mainContentComposable: @Composable (paddingValues: PaddingValues) -> Unit
+    val snackbarHostState = remember { SnackbarHostState() }
     when (val currentState = gapDetailsState) {
         is GapDetailsState.GapDetailsData -> {
             topBarTitle = currentState.gapTitle
@@ -46,6 +52,7 @@ fun GapDetailsScreen(
                     data = currentState
                 )
             }
+            currentState.ShowWarnings(snackbarHostState = snackbarHostState)
         }
 
         else -> {
@@ -55,6 +62,7 @@ fun GapDetailsScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
@@ -78,13 +86,30 @@ fun GapDetailsScreen(
     )
 }
 
+@Composable
+private fun GapDetailsState.GapDetailsData.ShowWarnings(snackbarHostState: SnackbarHostState) {
+    if (warnings.isNotEmpty()) {
+        LaunchedEffect(key1 = this) {
+            snackbarHostState.showSnackbar(
+                message = warnings.joinToString("\n"),
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     GapCalcTheme {
         ChartView(
             PaddingValues(0.dp),
-            GapDetailsState.GapDetailsData("", ChartData(emptyList()), TextData(emptyList(), emptyList()))
+            GapDetailsState.GapDetailsData(
+                gapTitle = "",
+                chartData = ChartData(emptyList()),
+                textData = TextData(emptyList(), emptyList()),
+                warnings = emptyList()
+            )
         )
     }
 }

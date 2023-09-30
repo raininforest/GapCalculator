@@ -1,6 +1,7 @@
 package com.github.raininforest.ui.details
 
 import com.github.raininforest.data.GapDetailsRepository
+import com.github.raininforest.data.entity.CalculationWarnings
 import com.github.raininforest.data.entity.GapDetailsEntity
 import com.github.raininforest.ui.BaseViewModel
 import com.github.raininforest.ui.details.data.GapDetailsState
@@ -32,7 +33,18 @@ class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository
             GapDetailsState.GapDetailsData(
                 gapTitle = gapTitle,
                 chartData = chartData,
-                textData = textData
+                textData = textData,
+                warnings = warnings.toWarningText()
             )
         }
+
+    private fun List<CalculationWarnings>.toWarningText(): List<String> {
+        return this.map { warning ->
+            when (warning){
+                CalculationWarnings.HARD_LANDING -> "Приземление будет жестким"
+                CalculationWarnings.EARLY_LANDING -> "Похоже, недолёт"
+                CalculationWarnings.BIG_GAP -> "Большой трамплин"
+            }
+        }
+    }
 }
