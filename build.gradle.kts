@@ -1,10 +1,11 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     //trick: for the same plugin versions in all sub-modules
-    id("com.android.application").version("8.1.0").apply(false)
-    id("com.android.library").version("8.1.0").apply(false)
-    kotlin("android").version("1.9.10").apply(false)
-    kotlin("multiplatform").version("1.9.10").apply(false)
-    id("app.cash.sqldelight").version("2.0.0").apply(false)
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.sql.delight) apply false
 }
 
 tasks.register("clean", Delete::class) {
