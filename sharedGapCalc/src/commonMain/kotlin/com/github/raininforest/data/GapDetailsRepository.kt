@@ -20,7 +20,8 @@ class GapDetailsRepository(
         return GapDetailsEntity(
             gapTitle = gapTitle,
             chartData = calculationResult.chartData,
-            textData = parameterComposer.composeParameters(gapInputParameters, gapOutputParameters)
+            textData = parameterComposer.composeParameters(gapInputParameters, gapOutputParameters),
+            warnings = calculationResult.warnings
         )
     }
 
@@ -28,6 +29,7 @@ class GapDetailsRepository(
         get() = GapDetailsEntity(
             gapTitle = "",
             chartData = ChartData(emptyList()),
-            textData = TextData(emptyList(), emptyList())
+            textData = TextData(emptyList(), emptyList()),
+            warnings = emptyList()
         )
 }
