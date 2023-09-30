@@ -9,9 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.github.raininforest.android.gap.details.GapDetailsScreen
-import com.github.raininforest.android.gap.edit.GapEditScreen
-import com.github.raininforest.android.gap.list.GapListScreen
+import com.github.raininforest.android.ui.gap.details.GapDetailsScreen
+import com.github.raininforest.android.ui.gap.edit.GapEditScreen
+import com.github.raininforest.android.ui.gap.list.GapListScreen
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.navigation.NavDestinations
 

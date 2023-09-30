@@ -20,7 +20,7 @@ internal class CalculatorImpl : Calculator {
     private companion object {
         const val DEFAULT_START_LENGTH = 4.0
         const val DEFAULT_FINISH_LENGTH = 4.0
-        const val CHART_SAMPLING = 0.025
+        const val X_STEP = 0.1
     }
 
     override suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult {
@@ -73,7 +73,6 @@ internal class CalculatorImpl : Calculator {
         val resultFunction = mutableListOf<Point>()
         val startX = 0.0
         val endX = DEFAULT_FINISH_LENGTH + inParams.gapLengthInMeters
-        val deltaX = (endX - startX) * CHART_SAMPLING
         var x = startX
 
         if (inParams.startAngleInDegrees < 89) {
@@ -88,7 +87,7 @@ internal class CalculatorImpl : Calculator {
                         )
                     )
                 )
-                x += deltaX
+                x += X_STEP
             }
         } else {
             // вылет вертикально вверх
@@ -135,7 +134,6 @@ internal class CalculatorImpl : Calculator {
 
         val startX = -xRange
         val endX = 0.0
-        val deltaX = xRange * CHART_SAMPLING
 
         var x = startX
         while (x < endX) {
@@ -149,7 +147,7 @@ internal class CalculatorImpl : Calculator {
                     )
                 )
             )
-            x += deltaX
+            x += X_STEP
         }
 
         return resultFunction

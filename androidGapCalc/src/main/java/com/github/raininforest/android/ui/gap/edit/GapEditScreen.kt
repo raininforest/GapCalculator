@@ -1,4 +1,4 @@
-package com.github.raininforest.android.gap.edit
+package com.github.raininforest.android.ui.gap.edit
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
@@ -28,17 +29,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.raininforest.android.gap.common.BottomBar
-import com.github.raininforest.android.gap.common.TopBar
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.customTextSelectionColors
-import com.github.raininforest.android.theme.whiteGray
+import com.github.raininforest.android.ui.gap.common.BottomBar
+import com.github.raininforest.android.ui.gap.common.TopBar
 import com.github.raininforest.data.DEGREE
 import com.github.raininforest.data.FINISH_ANGLE
 import com.github.raininforest.data.FINISH_HEIGHT
@@ -58,7 +59,7 @@ private const val ITEM_SPACING = 8
 private const val ITEM_HEIGHT = 72
 private const val ITEM_CORNER_RADIUS = 32
 private const val ITEM_LABEL_WIDTH = 192
-private const val ITEM_FIELD_WIDTH = 92
+private const val ITEM_FIELD_WIDTH = 124
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -162,8 +163,8 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
                     .padding(end = PADDING.dp)
                     .width(ITEM_FIELD_WIDTH.dp),
                 value = state,
-                onValueChange = {
-                    vmState.value = it
+                onValueChange = { inputString ->
+                    vmState.value = inputString.validateInput()
                 },
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End, fontSize = 28.sp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -173,10 +174,20 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
                     unfocusedIndicatorColor = Color.Transparent,
                     backgroundColor = MaterialTheme.colors.onPrimary
                 ),
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
     }
 }
+
+
+private fun String.validateInput(): String {
+    return this
+        .replace(oldChar = ',', newChar = '.')
+        .ifEmpty { "0.0" }
+}
+
 
 @Preview(showBackground = true)
 @Composable

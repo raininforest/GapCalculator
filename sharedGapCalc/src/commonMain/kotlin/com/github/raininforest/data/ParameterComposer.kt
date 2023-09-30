@@ -1,8 +1,8 @@
 package com.github.raininforest.data
 
+import com.github.raininforest.calculator.OutputParameters
 import com.github.raininforest.calculator.mpStoKmH
 import com.github.raininforest.data.entity.GapParametersEntity
-import com.github.raininforest.calculator.OutputParameters
 import com.github.raininforest.data.entity.TextData
 
 class ParameterComposer {
@@ -30,6 +30,7 @@ class ParameterComposer {
     private fun Double.format(decimals: Int): String {
         val str = this.toString()
         val delimiterIndex = str.indexOf('.')
-        return str.dropLast(n = str.length - (delimiterIndex + 1 + decimals))
+        val numberToDrop = str.length - (delimiterIndex + 1 + decimals)
+        return if (numberToDrop < 0) str else str.dropLast(n = numberToDrop)
     }
 }

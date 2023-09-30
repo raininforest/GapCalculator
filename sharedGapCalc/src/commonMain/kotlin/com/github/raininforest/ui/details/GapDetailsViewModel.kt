@@ -26,7 +26,7 @@ class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository
     }
 
     private fun GapDetailsEntity.toUiState(): GapDetailsState =
-        if (false) { // todo if (this.chartData.charts.isEmpty())
+        if (chartData.charts.isEmpty()) {
             GapDetailsState.GapDetailsEmpty
         } else {
             GapDetailsState.GapDetailsData(

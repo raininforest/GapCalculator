@@ -1,4 +1,4 @@
-package com.github.raininforest.android.gap.list
+package com.github.raininforest.android.ui.gap.list
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -42,7 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.raininforest.android.gap.common.NoData
+import com.github.raininforest.android.ui.gap.common.NoData
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray

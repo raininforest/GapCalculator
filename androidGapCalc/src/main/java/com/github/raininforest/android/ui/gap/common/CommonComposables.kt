@@ -1,4 +1,4 @@
-package com.github.raininforest.android.gap.common
+package com.github.raininforest.android.ui.gap.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box

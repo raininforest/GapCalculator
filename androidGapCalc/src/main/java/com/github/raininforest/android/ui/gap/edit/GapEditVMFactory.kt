@@ -1,4 +1,4 @@
-package com.github.raininforest.android.gap.edit
+package com.github.raininforest.android.ui.gap.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
