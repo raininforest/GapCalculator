@@ -42,11 +42,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.raininforest.android.ui.gap.common.NoData
+import com.github.raininforest.android.GapCalculatorApplication.Companion.deps
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
-import com.github.raininforest.di.Dependencies
+import com.github.raininforest.android.ui.gap.common.NoData
 import com.github.raininforest.ui.list.GapListViewModel
 import com.github.raininforest.ui.list.data.GapListItem
 import com.github.raininforest.ui.list.data.GapListState
@@ -62,7 +62,7 @@ private const val BUTTON_STROKE_WIDTH = 1
 fun GapListScreen(
     onGapClicked: (gapId: Long) -> Unit = {},
     gapListViewModel: GapListViewModel = viewModel(
-        factory = GapListVMFactory(gapListRepository = Dependencies.gapListRepository)
+        factory = GapListVMFactory(gapListRepository = deps.gapListRepository)
     )
 ) {
     gapListViewModel.fetchList() // todo сделать swipe refresh

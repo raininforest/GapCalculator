@@ -3,6 +3,7 @@ package com.github.raininforest.ui.details
 import com.github.raininforest.data.GapDetailsRepository
 import com.github.raininforest.data.entity.CalculationWarnings
 import com.github.raininforest.data.entity.GapDetailsEntity
+import com.github.raininforest.share.ShareService
 import com.github.raininforest.ui.BaseViewModel
 import com.github.raininforest.ui.details.data.GapDetailsState
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository) : BaseViewModel() {
+class GapDetailsViewModel(
+    private val gapDetailsRepository: GapDetailsRepository,
+    private val shareService: ShareService
+) : BaseViewModel() {
     private val _gapDetailsState = MutableStateFlow<GapDetailsState>(GapDetailsState.GapDetailsEmpty)
     val gapDetails: StateFlow<GapDetailsState>
         get() = _gapDetailsState
@@ -23,6 +27,15 @@ class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository
             withContext(Dispatchers.Main) {
                 _gapDetailsState.value = gapDetailsUi.toUiState()
             }
+        }
+    }
+
+    fun onShareClicked() {
+        val currentParameters = _gapDetailsState.value
+        if (currentParameters is GapDetailsState.GapDetailsData) {
+            val textData = currentParameters.textData
+            val finalList = textData.inputGapParameters + textData.outputGapParameters
+            shareService.share(finalList.joinToString("\n"))
         }
     }
 
@@ -40,7 +53,7 @@ class GapDetailsViewModel(private val gapDetailsRepository: GapDetailsRepository
 
     private fun List<CalculationWarnings>.toWarningText(): List<String> {
         return this.map { warning ->
-            when (warning){
+            when (warning) {
                 CalculationWarnings.HARD_LANDING -> "Приземление будет жестким"
                 CalculationWarnings.EARLY_LANDING -> "Похоже, недолёт"
                 CalculationWarnings.BIG_GAP -> "Большой трамплин"

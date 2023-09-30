@@ -48,6 +48,7 @@ fun NoData() {
 @Composable
 fun TopBar(
     onBackClicked: () -> Unit,
+    onShareClicked: () -> Unit = {},
     titleComposable: @Composable (modifier: Modifier) -> Unit,
     hasShare: Boolean = true
 ) {
@@ -80,7 +81,7 @@ fun TopBar(
         if (!hasShare) return
 
         OutlinedButton(
-            onClick = {},
+            onClick = onShareClicked,
             shape = CircleShape,
             modifier = Modifier
                 .safeContentPadding()

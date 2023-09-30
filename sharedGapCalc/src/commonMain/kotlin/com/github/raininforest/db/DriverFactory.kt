@@ -4,6 +4,6 @@ import app.cash.sqldelight.db.SqlDriver
 
 const val DB_FILE_NAME = "gapCalc.db"
 
-expect class DriverFactory {
+interface DriverFactory {
     fun createDriver(): SqlDriver
 }

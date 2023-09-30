@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.raininforest.android.GapCalculatorApplication.Companion.deps
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.ui.gap.common.BottomBar
 import com.github.raininforest.android.ui.gap.common.NoData
@@ -22,7 +23,6 @@ import com.github.raininforest.android.ui.gap.common.TopBar
 import com.github.raininforest.android.ui.gap.details.chart.ChartView
 import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.TextData
-import com.github.raininforest.di.Dependencies
 import com.github.raininforest.ui.details.GapDetailsViewModel
 import com.github.raininforest.ui.details.data.GapDetailsState
 
@@ -34,7 +34,10 @@ fun GapDetailsScreen(
     onEditClicked: (gapId: Long?) -> Unit = {},
     onBackClicked: () -> Unit = {},
     gapDetailsViewModel: GapDetailsViewModel = viewModel(
-        factory = GapDetailsVMFactory(gapDetailsRepository = Dependencies.gapDetailsRepository)
+        factory = GapDetailsVMFactory(
+            gapDetailsRepository = deps.gapDetailsRepository,
+            shareService = deps.shareService
+        )
     )
 ) {
     gapId?.let(gapDetailsViewModel::fetchGapDetails)
@@ -43,6 +46,7 @@ fun GapDetailsScreen(
     val topBarTitle: String
     val mainContentComposable: @Composable (paddingValues: PaddingValues) -> Unit
     val snackbarHostState = remember { SnackbarHostState() }
+
     when (val currentState = gapDetailsState) {
         is GapDetailsState.GapDetailsData -> {
             topBarTitle = currentState.gapTitle
@@ -66,6 +70,7 @@ fun GapDetailsScreen(
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
+                onShareClicked = { gapDetailsViewModel.onShareClicked() },
                 titleComposable = { modifier ->
                     Text(
                         text = topBarTitle,

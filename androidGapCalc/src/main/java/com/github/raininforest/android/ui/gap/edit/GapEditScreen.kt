@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.raininforest.android.GapCalculatorApplication.Companion.deps
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.customTextSelectionColors
 import com.github.raininforest.android.ui.gap.common.BottomBar
@@ -50,7 +51,6 @@ import com.github.raininforest.data.START_ANGLE
 import com.github.raininforest.data.START_HEIGHT
 import com.github.raininforest.data.START_SPEED
 import com.github.raininforest.data.TABLE
-import com.github.raininforest.di.Dependencies
 import com.github.raininforest.ui.edit.GapEditViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -68,7 +68,7 @@ fun GapEditScreen(
     onApplyClicked: () -> Unit = {},
     onBackClicked: () -> Unit = {},
     gapEditViewModel: GapEditViewModel = viewModel(
-        factory = GapEditVMFactory(gapEditRepository = Dependencies.gapEditRepository)
+        factory = GapEditVMFactory(gapEditRepository = deps.gapEditRepository)
     )
 ) {
     gapId?.let(gapEditViewModel::fetchGapParameters)

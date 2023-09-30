@@ -7,15 +7,14 @@ import com.github.raininforest.data.GapDetailsRepository
 import com.github.raininforest.data.GapEditRepository
 import com.github.raininforest.data.GapListRepository
 import com.github.raininforest.data.ParameterComposer
+import com.github.raininforest.db.DBFactory
 import com.github.raininforest.db.DBSource
 import com.github.raininforest.db.DBSourceImpl
-import kotlin.native.concurrent.ThreadLocal
+import com.github.raininforest.share.ShareService
 
-@ThreadLocal
-private var db: GapCalcDatabase? = null
-
-object Dependencies {
-
+class Dependencies(
+    private val platformDependencies: PlatformDependencies
+) {
     val gapListRepository: GapListRepository
         get() = GapListRepository(dbSource)
 
@@ -39,10 +38,12 @@ object Dependencies {
         DBSourceImpl(db)
     }
 
-    /**
-     * Вызывать в Application.onCreate
-     */
-    fun initDb(database: GapCalcDatabase) {
-        db = database
+    private val db: GapCalcDatabase by lazy {
+        dbFactory.createDB()
     }
+
+    private val dbFactory: DBFactory
+        get() = DBFactory(platformDependencies.sqlDriverFactory)
+
+    val shareService: ShareService by lazy { platformDependencies.shareService }
 }
