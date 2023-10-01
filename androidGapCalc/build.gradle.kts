@@ -1,6 +1,7 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -8,8 +9,9 @@ android {
     compileSdk = 34
     defaultConfig {
         applicationId = "com.github.raininforest.android"
-        minSdk = 24
-        targetSdk = 33
+        minSdk = 26
+        //noinspection EditedTargetSdkVersion
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
@@ -40,12 +42,12 @@ android {
 
 dependencies {
     implementation(project(":sharedGapCalc"))
-    implementation("androidx.compose.ui:ui:1.5.1")
-    implementation("androidx.compose.ui:ui-tooling:1.5.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
-    implementation("androidx.compose.foundation:foundation:1.5.1")
-    implementation("androidx.compose.material:material:1.5.1")
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.navigation:navigation-compose:2.7.2")
-    implementation("com.patrykandpatrick.vico:compose:1.12.0")
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.patrykandpatrick.vico.compose)
 }

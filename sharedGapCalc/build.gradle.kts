@@ -1,7 +1,8 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("app.cash.sqldelight") version "2.0.0"
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.sql.delight)
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -29,8 +30,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.datetime)
             }
         }
         val commonTest by getting {
@@ -40,13 +41,13 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-                implementation("app.cash.sqldelight:android-driver:2.0.0")
+                implementation(libs.androidx.lifecycle.viewmodel.ktx)
+                implementation(libs.android.driver)
             }
         }
         val iosMain by getting {
             dependencies {
-                implementation("app.cash.sqldelight:native-driver:2.0.0")
+                implementation(libs.native.driver)
             }
         }
     }
@@ -56,7 +57,7 @@ android {
     namespace = "com.github.raininforest"
     compileSdk = 34
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
