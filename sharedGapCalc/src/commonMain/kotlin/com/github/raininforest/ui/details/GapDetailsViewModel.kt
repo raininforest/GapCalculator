@@ -1,9 +1,9 @@
 package com.github.raininforest.ui.details
 
-import com.github.raininforest.data.GapDetailsRepository
+import com.github.raininforest.data.repository.GapDetailsRepository
 import com.github.raininforest.data.entity.CalculationWarnings
 import com.github.raininforest.data.entity.GapDetailsEntity
-import com.github.raininforest.share.ShareService
+import com.github.raininforest.usecases.share.ShareService
 import com.github.raininforest.ui.BaseViewModel
 import com.github.raininforest.ui.details.data.GapDetailsState
 import kotlinx.coroutines.Dispatchers

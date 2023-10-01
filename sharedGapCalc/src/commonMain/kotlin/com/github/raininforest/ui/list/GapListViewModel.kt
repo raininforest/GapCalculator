@@ -1,6 +1,6 @@
 package com.github.raininforest.ui.list
 
-import com.github.raininforest.data.GapListRepository
+import com.github.raininforest.data.repository.GapListRepository
 import com.github.raininforest.data.entity.GapListItemEntity
 import com.github.raininforest.ui.BaseViewModel
 import com.github.raininforest.ui.list.data.GapListItem

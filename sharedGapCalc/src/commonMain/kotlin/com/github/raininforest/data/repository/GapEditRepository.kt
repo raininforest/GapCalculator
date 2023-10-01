@@ -1,4 +1,4 @@
-package com.github.raininforest.data
+package com.github.raininforest.data.repository
 
 import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.db.DBSource

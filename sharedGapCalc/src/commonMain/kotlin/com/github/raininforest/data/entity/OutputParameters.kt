@@ -1,4 +1,4 @@
-package com.github.raininforest.calculator
+package com.github.raininforest.data.entity
 
 data class OutputParameters(
     val v0: Double,

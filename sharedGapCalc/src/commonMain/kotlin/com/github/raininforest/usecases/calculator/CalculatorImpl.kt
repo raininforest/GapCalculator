@@ -1,19 +1,16 @@
-package com.github.raininforest.calculator
+package com.github.raininforest.usecases.calculator
 
 import com.github.raininforest.data.entity.CalculationResult
 import com.github.raininforest.data.entity.Chart
 import com.github.raininforest.data.entity.ChartConfig
 import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.GapParametersEntity
+import com.github.raininforest.data.entity.OutputParameters
 import com.github.raininforest.data.entity.Point
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.tan
-
-interface Calculator {
-    suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult
-}
 
 internal class CalculatorImpl : Calculator {
 

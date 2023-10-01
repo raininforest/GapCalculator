@@ -4,7 +4,7 @@ import android.content.Context
 import com.github.raininforest.db.AndroidDriverFactory
 import com.github.raininforest.db.DriverFactory
 import com.github.raininforest.share.AndroidShareService
-import com.github.raininforest.share.ShareService
+import com.github.raininforest.usecases.share.ShareService
 
 class AndroidPlatformDependencies(private val context: Context) : PlatformDependencies {
     override val sqlDriverFactory: DriverFactory

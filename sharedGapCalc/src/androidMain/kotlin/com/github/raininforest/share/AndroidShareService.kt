@@ -2,6 +2,7 @@ package com.github.raininforest.share
 
 import android.content.Context
 import android.content.Intent
+import com.github.raininforest.usecases.share.ShareService
 
 class AndroidShareService(private val context: Context) : ShareService {
 

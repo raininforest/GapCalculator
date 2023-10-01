@@ -1,6 +1,6 @@
-package com.github.raininforest.calculator
+package com.github.raininforest.usecases.calculator
 
-data class InputParameters(
+internal data class InputParameters(
     val gapLengthInMeters: Double,
     val tableLengthInMeters: Double,
     val startHeightInMeters: Double,

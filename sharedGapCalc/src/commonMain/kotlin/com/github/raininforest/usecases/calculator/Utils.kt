@@ -1,7 +1,8 @@
-package com.github.raininforest.calculator
+package com.github.raininforest.usecases.calculator
 
 import com.github.raininforest.data.entity.CalculationWarnings
 import com.github.raininforest.data.entity.GapParametersEntity
+import com.github.raininforest.data.entity.OutputParameters
 import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.ceil

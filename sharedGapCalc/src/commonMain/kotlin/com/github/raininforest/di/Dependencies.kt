@@ -1,16 +1,16 @@
 package com.github.raininforest.di
 
 import com.github.raininforest.GapCalcDatabase
-import com.github.raininforest.calculator.Calculator
-import com.github.raininforest.calculator.CalculatorImpl
-import com.github.raininforest.data.GapDetailsRepository
-import com.github.raininforest.data.GapEditRepository
-import com.github.raininforest.data.GapListRepository
-import com.github.raininforest.data.ParameterComposer
+import com.github.raininforest.usecases.calculator.Calculator
+import com.github.raininforest.usecases.calculator.CalculatorImpl
+import com.github.raininforest.data.repository.GapDetailsRepository
+import com.github.raininforest.data.repository.GapEditRepository
+import com.github.raininforest.data.repository.GapListRepository
+import com.github.raininforest.usecases.parametercomposer.ParameterComposer
 import com.github.raininforest.db.DBFactory
 import com.github.raininforest.db.DBSource
 import com.github.raininforest.db.DBSourceImpl
-import com.github.raininforest.share.ShareService
+import com.github.raininforest.usecases.share.ShareService
 
 class Dependencies(
     private val platformDependencies: PlatformDependencies

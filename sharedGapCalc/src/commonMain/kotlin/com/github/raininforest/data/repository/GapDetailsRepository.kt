@@ -1,6 +1,7 @@
-package com.github.raininforest.data
+package com.github.raininforest.data.repository
 
-import com.github.raininforest.calculator.Calculator
+import com.github.raininforest.usecases.calculator.Calculator
+import com.github.raininforest.usecases.parametercomposer.ParameterComposer
 import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.GapDetailsEntity
 import com.github.raininforest.data.entity.TextData

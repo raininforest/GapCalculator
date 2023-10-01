@@ -2,8 +2,8 @@ package com.github.raininforest.android.ui.gap.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.github.raininforest.data.GapDetailsRepository
-import com.github.raininforest.share.ShareService
+import com.github.raininforest.data.repository.GapDetailsRepository
+import com.github.raininforest.usecases.share.ShareService
 import com.github.raininforest.ui.details.GapDetailsViewModel
 
 internal class GapDetailsVMFactory(

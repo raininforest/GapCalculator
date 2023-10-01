@@ -1,4 +1,4 @@
-package com.github.raininforest.calculator
+package com.github.raininforest.usecases.calculator
 
 import kotlin.math.pow
 import kotlin.math.sqrt

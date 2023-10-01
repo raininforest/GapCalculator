@@ -1,7 +1,22 @@
-package com.github.raininforest.data
+package com.github.raininforest.usecases.parametercomposer
 
-import com.github.raininforest.calculator.OutputParameters
-import com.github.raininforest.calculator.mpStoKmH
+import com.github.raininforest.data.entity.OutputParameters
+import com.github.raininforest.usecases.calculator.mpStoKmH
+import com.github.raininforest.data.DEGREE
+import com.github.raininforest.data.FINISH_ANGLE
+import com.github.raininforest.data.FINISH_HEIGHT
+import com.github.raininforest.data.GAP
+import com.github.raininforest.data.G_LANDING
+import com.github.raininforest.data.H_WHERE_START
+import com.github.raininforest.data.KMH
+import com.github.raininforest.data.METER
+import com.github.raininforest.data.R_START
+import com.github.raininforest.data.R_START_MIN
+import com.github.raininforest.data.SPEED_0
+import com.github.raininforest.data.START_ANGLE
+import com.github.raininforest.data.START_HEIGHT
+import com.github.raininforest.data.START_SPEED
+import com.github.raininforest.data.TABLE
 import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.data.entity.TextData
 

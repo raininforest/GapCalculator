@@ -1,6 +1,6 @@
 package com.github.raininforest.ui.edit
 
-import com.github.raininforest.data.GapEditRepository
+import com.github.raininforest.data.repository.GapEditRepository
 import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.ui.BaseViewModel
 import kotlinx.coroutines.Dispatchers
