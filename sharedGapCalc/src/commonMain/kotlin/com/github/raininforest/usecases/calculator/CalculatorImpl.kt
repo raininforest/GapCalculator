@@ -18,9 +18,33 @@ internal class CalculatorImpl : Calculator {
         const val DEFAULT_START_LENGTH = 4.0
         const val DEFAULT_FINISH_LENGTH = 4.0
         const val X_STEP = 0.1
+
+        val FALLBACK_RESULT = CalculationResult(
+            outputParameters = OutputParameters(
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ),
+            chartData = ChartData(emptyList()),
+            warnings = emptyList()
+        )
     }
 
     override suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult {
+        return try {
+            innerCalculate(gapInputParameters)
+        } catch (_: Throwable) {
+            FALLBACK_RESULT
+        }
+    }
+
+    private fun innerCalculate(gapInputParameters: GapParametersEntity): CalculationResult {
         val inputParams = gapInputParameters.convertToSINumbers()
 
         val landingParams = calculateLandingParams(inParams = inputParams)

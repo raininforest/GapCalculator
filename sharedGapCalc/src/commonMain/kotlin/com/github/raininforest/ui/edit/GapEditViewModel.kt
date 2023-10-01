@@ -1,7 +1,7 @@
 package com.github.raininforest.ui.edit
 
-import com.github.raininforest.data.repository.GapEditRepository
 import com.github.raininforest.data.entity.GapParametersEntity
+import com.github.raininforest.data.repository.GapEditRepository
 import com.github.raininforest.ui.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -11,6 +11,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseViewModel() {
+
+    private companion object {
+        const val DEFAULT_ZERO_VALUE = "0.0"
+    }
 
     private var cachedGapId: Long? = null
 
@@ -61,7 +65,7 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseV
     }
 
     private fun getParams() = GapParametersEntity(
-        gap = gapState.value,
+        gap = gapState.value.validateInput(),
         table = tableState.value,
         startHeight = startHeightState.value,
         startAngle = startAngleState.value,
@@ -69,4 +73,16 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseV
         finishAngle = finishAngleState.value,
         startSpeed = startSpeedState.value
     )
+
+    private fun String.validateInput(): String {
+        val safeVal = this
+            .replace(oldChar = ',', newChar = '.')
+            .ifEmpty { DEFAULT_ZERO_VALUE }
+        return try {
+            safeVal.toDouble()
+            safeVal
+        } catch (t: Throwable) {
+            DEFAULT_ZERO_VALUE
+        }
+    }
 }

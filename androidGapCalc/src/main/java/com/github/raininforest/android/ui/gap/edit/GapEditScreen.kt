@@ -164,7 +164,7 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
                     .width(ITEM_FIELD_WIDTH.dp),
                 value = state,
                 onValueChange = { inputString ->
-                    vmState.value = inputString.validateInput()
+                    vmState.value = inputString
                 },
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End, fontSize = 28.sp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -180,14 +180,6 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
         }
     }
 }
-
-
-private fun String.validateInput(): String {
-    return this
-        .replace(oldChar = ',', newChar = '.')
-        .ifEmpty { "0.0" }
-}
-
 
 @Preview(showBackground = true)
 @Composable
