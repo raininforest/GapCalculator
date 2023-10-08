@@ -41,7 +41,7 @@ struct GapListItem: View {
 }
 
 @available(iOS 15.0, *)
-struct GapList_Previews: PreviewProvider {
+struct GapListScreen_Previews: PreviewProvider {
     static var previews: some View {
         GapListItem()
             .background(.gray)
