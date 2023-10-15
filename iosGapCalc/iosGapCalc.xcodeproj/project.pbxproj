@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		A5E381672AD281EE008CE75F /* GapListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E381662AD281EE008CE75F /* GapListScreen.swift */; };
+		A5E381692AD3370B008CE75F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E381682AD3370B008CE75F /* Colors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +36,7 @@
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A5E381662AD281EE008CE75F /* GapListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapListScreen.swift; sourceTree = "<group>"; };
+		A5E381682AD3370B008CE75F /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,9 +98,18 @@
 		A5E381652AD28130008CE75F /* Ui */ = {
 			isa = PBXGroup;
 			children = (
-				A5E381662AD281EE008CE75F /* GapListScreen.swift */,
+				A5E3816A2AD33804008CE75F /* GapList */,
+				A5E381682AD3370B008CE75F /* Colors.swift */,
 			);
 			path = Ui;
+			sourceTree = "<group>";
+		};
+		A5E3816A2AD33804008CE75F /* GapList */ = {
+			isa = PBXGroup;
+			children = (
+				A5E381662AD281EE008CE75F /* GapListScreen.swift */,
+			);
+			path = GapList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,6 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				A5E381692AD3370B008CE75F /* Colors.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				A5E381672AD281EE008CE75F /* GapListScreen.swift in Sources */,
 			);
