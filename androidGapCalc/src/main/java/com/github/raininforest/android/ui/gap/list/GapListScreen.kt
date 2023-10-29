@@ -65,7 +65,7 @@ fun GapListScreen(
         factory = GapListVMFactory(gapListRepository = deps.gapListRepository)
     )
 ) {
-    gapListViewModel.fetchList() // todo сделать swipe refresh
+    gapListViewModel.fetchList()
 
     val gapListState by gapListViewModel.gapList.collectAsState()
 
