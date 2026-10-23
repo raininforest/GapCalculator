@@ -15,6 +15,12 @@
 		A5B5D1312AEE60E10062BF7D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B5D1302AEE60E10062BF7D /* Extensions.swift */; };
 		A5E381672AD281EE008CE75F /* GapListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E381662AD281EE008CE75F /* GapListScreen.swift */; };
 		A5E381692AD3370B008CE75F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E381682AD3370B008CE75F /* Colors.swift */; };
+		B0C0DE000000000000000002 /* Observables.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C0DE000000000000000001 /* Observables.swift */; };
+		B0C0DE000000000000000004 /* GapDetailsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C0DE000000000000000003 /* GapDetailsScreen.swift */; };
+		B0C0DE000000000000000006 /* TrajectoryChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C0DE000000000000000005 /* TrajectoryChartView.swift */; };
+		B0C0DE000000000000000008 /* GapEditScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C0DE000000000000000007 /* GapEditScreen.swift */; };
+		B0C0DE0000000000000101 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0C0DE0000000000000100 /* Localizable.strings */; };
+		B0C0DE0000000000000111 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C0DE0000000000000110 /* Localization.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +47,13 @@
 		A5B5D1302AEE60E10062BF7D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A5E381662AD281EE008CE75F /* GapListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapListScreen.swift; sourceTree = "<group>"; };
 		A5E381682AD3370B008CE75F /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		B0C0DE000000000000000001 /* Observables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observables.swift; sourceTree = "<group>"; };
+		B0C0DE000000000000000003 /* GapDetailsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapDetailsScreen.swift; sourceTree = "<group>"; };
+		B0C0DE000000000000000005 /* TrajectoryChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryChartView.swift; sourceTree = "<group>"; };
+		B0C0DE000000000000000007 /* GapEditScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapEditScreen.swift; sourceTree = "<group>"; };
+		B0C0DE0000000000000102 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B0C0DE0000000000000103 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B0C0DE0000000000000110 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +65,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B0C0DE0000000000000100 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B0C0DE0000000000000102 /* en */,
+				B0C0DE0000000000000103 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin PBXGroup section */
 		058557D7273AAEEB004C7B11 /* Preview Content */ = {
@@ -87,6 +112,7 @@
 				A5E381652AD28130008CE75F /* Ui */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
+				B0C0DE0000000000000100 /* Localizable.strings */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 			);
 			path = iosGapCalc;
@@ -104,6 +130,7 @@
 			children = (
 				A5B5D12F2AEE608C0062BF7D /* KotlinInterop */,
 				A5B5D12D2AEE54DC0062BF7D /* CommonViews.swift */,
+				B0C0DE0000000000000110 /* Localization.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -112,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				A5B5D1302AEE60E10062BF7D /* Extensions.swift */,
+				B0C0DE000000000000000001 /* Observables.swift */,
 			);
 			path = KotlinInterop;
 			sourceTree = "<group>";
@@ -121,6 +149,8 @@
 			children = (
 				A5B5D12C2AEE54BA0062BF7D /* Common */,
 				A5E3816A2AD33804008CE75F /* GapList */,
+				B0C0DE00000000000000A1 /* GapDetails */,
+				B0C0DE00000000000000A2 /* GapEdit */,
 				A5E381682AD3370B008CE75F /* Colors.swift */,
 			);
 			path = Ui;
@@ -132,6 +162,23 @@
 				A5E381662AD281EE008CE75F /* GapListScreen.swift */,
 			);
 			path = GapList;
+			sourceTree = "<group>";
+		};
+		B0C0DE00000000000000A1 /* GapDetails */ = {
+			isa = PBXGroup;
+			children = (
+				B0C0DE000000000000000003 /* GapDetailsScreen.swift */,
+				B0C0DE000000000000000005 /* TrajectoryChartView.swift */,
+			);
+			path = GapDetails;
+			sourceTree = "<group>";
+		};
+		B0C0DE00000000000000A2 /* GapEdit */ = {
+			isa = PBXGroup;
+			children = (
+				B0C0DE000000000000000007 /* GapEditScreen.swift */,
+			);
+			path = GapEdit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,6 +225,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				ru,
 				Base,
 			);
 			mainGroup = 7555FF72242A565900829871;
@@ -197,6 +245,7 @@
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				B0C0DE0000000000000101 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,6 +282,11 @@
 				A5E381692AD3370B008CE75F /* Colors.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				A5E381672AD281EE008CE75F /* GapListScreen.swift in Sources */,
+				B0C0DE0000000000000111 /* Localization.swift in Sources */,
+				B0C0DE000000000000000002 /* Observables.swift in Sources */,
+				B0C0DE000000000000000004 /* GapDetailsScreen.swift in Sources */,
+				B0C0DE000000000000000006 /* TrajectoryChartView.swift in Sources */,
+				B0C0DE000000000000000008 /* GapEditScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,7 +330,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -338,7 +392,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -370,7 +424,6 @@
 					"$(inherited)",
 					"$(SRCROOT)/../sharedGapCalc/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
-				"FRAMEWORK_SEARCH_PATHS[sdk=*]" = "$(SRCROOT)/../sharedGapCalc/build/xcode-frameworks/$(CONFIGURATION)/iphonesimulator17.0";
 				INFOPLIST_FILE = iosGapCalc/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				LD_RUNPATH_SEARCH_PATHS = (

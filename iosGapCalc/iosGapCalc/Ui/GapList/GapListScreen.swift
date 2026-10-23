@@ -15,42 +15,51 @@ let ITEM_CORNER_RADIUS = 32.0
 let CLOSE_BUTTON_SIZE = 48.0
 let CLOSE_BUTTON_ICON_NAME = "xmark"
 
-//struct GapListScreen: View {
-//    let onGapCLicked: (Int64) -> Void
-//    //todo init vm and collect state
-//    
-//    var body: some View {
-//        
-//    }
-//}
+struct GapListScreen: View {
+    @StateObject private var observable = GapListObservable()
 
-struct Content: View {
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Colors.lightGray.ignoresSafeArea()
+            ScrollView {
+                GapListContent(
+                    gapListState: observable.state,
+                    onGapRemovedClicked: observable.remove
+                )
+                .padding(.bottom, BUTTON_HEIGHT + PADDING * 2)
+            }
+            PrimaryButton(title: L("add"), fullWidth: false, action: observable.add)
+                .padding(.bottom, PADDING)
+        }
+        .navigationTitle(L("gap_list_title"))
+        .onAppear(perform: observable.refresh)
+    }
+}
+
+struct GapListContent: View {
     let gapListState: GapListState
-    let onGapCLicked: (Int64) -> Void
     let onGapRemovedClicked: (Int64) -> Void
     
     var body: some View {
         if let state = gapListState.data() {
-            Data(
+            GapListDataView(
                 currenState: state,
-                onGapCLicked: onGapCLicked,
                 onGapRemovedClicked: onGapRemovedClicked
             )
         } else {
             NoData()
+                .frame(maxWidth: .infinity, minHeight: 300)
         }
     }
 }
 
-struct Data: View {
+struct GapListDataView: View {
     let currenState: GapListState.GapListData
-    let onGapCLicked: (Int64) -> Void
     let onGapRemovedClicked: (Int64) -> Void
     
     var body: some View {
         GapList(
             gapList: currenState.gapList,
-            onGapCLicked: onGapCLicked,
             onGapRemovedClicked: onGapRemovedClicked
         )
     }
@@ -58,33 +67,33 @@ struct Data: View {
 
 struct GapList: View {
     let gapList: [GapListItem]
-    let onGapCLicked: (Int64) -> Void
     let onGapRemovedClicked: (Int64) -> Void
     
     var body: some View {
         LazyVStack(spacing: ITEM_SPACING) {
             ForEach(gapList, id: \GapListItem.id) { item in
-                GapListItemView(
-                    gapListItem: item,
-                    onGapClicked: onGapCLicked,
-                    onGapRemovedClicked: onGapRemovedClicked
-                )
+                NavigationLink(destination: GapDetailsScreen(gapId: item.id)) {
+                    GapListItemView(
+                        gapListItem: item,
+                        onGapRemovedClicked: onGapRemovedClicked
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding(.horizontal, PADDING)
-        .frame(maxHeight: .infinity, alignment: .topLeading)
+        .padding(.top, PADDING)
     }
 }
 
 struct GapListItemView: View {
     let gapListItem: GapListItem
-    let onGapClicked: (Int64) -> Void
     let onGapRemovedClicked: (Int64) -> Void
     
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(gapListItem.title)
+                Text(gapListItem.title.isEmpty ? L("untitled") : gapListItem.title)
                     .font(.body)
                     .foregroundColor(Colors.darkGray)
                 Text(gapListItem.date)
@@ -106,13 +115,10 @@ struct GapListItemView: View {
             .clipShape(Circle())
         }
         .padding(.all, PADDING)
+        // the end caps of the capsule are concentric with the round remove button
+        .frame(minHeight: CLOSE_BUTTON_SIZE + PADDING * 2)
         .background(Colors.white)
-        .clipShape(
-            RoundedRectangle(cornerRadius: ITEM_CORNER_RADIUS)
-        )
-        .onTapGesture {
-            onGapClicked(gapListItem.id)
-        }
+        .clipShape(Capsule())
     }
 }
 
@@ -122,21 +128,20 @@ struct GapListScreen_Previews: PreviewProvider {
             [
                 GapListItem(
                     id: 123,
-                    title: "Без названия 1",
+                    title: "Jump 1",
                     date: "2023-10-01"
                 ),
                 GapListItem(
                     id: 234,
-                    title: "Без названия 2",
+                    title: "Jump 2",
                     date: "2021-10-02"
                 ),
                 GapListItem(
                     id: 1234,
-                    title: "Без названия 3",
+                    title: "Jump 3",
                     date: "2021-10-02"
                 )
             ],
-                onGapCLicked: { id in },
                 onGapRemovedClicked: { id in }
         )
         .background(Colors.lightGray)

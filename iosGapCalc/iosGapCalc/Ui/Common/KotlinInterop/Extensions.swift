@@ -9,22 +9,6 @@
 import Foundation
 import sharedGapCalc
 
-enum GapListUiState {
-    case success(data: GapListState.GapListData)
-    case empty
-}
-
-extension GapListUiState {
-    init?(_ value: GapListState) {
-        switch value {
-        case let success as GapListState.GapListData:
-            self = GapListUiState.success(data: success)
-        default:
-            self = GapListUiState.empty
-        }
-    }
-}
-
 extension GapListState {
     func data() -> GapListState.GapListData? {
         return self as? GapListState.GapListData
