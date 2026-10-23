@@ -1,0 +1,34 @@
+# Overrides on top of detekt's default config (buildUponDefaultConfig = true).
+style:
+  MagicNumber:
+    active: false # physics code and Compose dimensions are full of literals
+  MaxLineLength:
+    maxLineLength: 120
+  WildcardImport:
+    active: true
+  ReturnCount:
+    max: 3
+  UnusedPrivateMember:
+    active: true
+
+naming:
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Za-z][A-Za-z0-9]*|[A-Z][_A-Z0-9]*' # physics constant `g`
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+
+complexity:
+  LongParameterList:
+    functionThreshold: 8
+    ignoreDefaultParameters: true
+  TooManyFunctions:
+    active: false
+
+formatting:
+  active: true
+  MaximumLineLength:
+    maxLineLength: 120
+  ImportOrdering:
+    active: false
+  NoWildcardImports:
+    active: false

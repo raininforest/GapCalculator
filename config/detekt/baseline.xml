@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:CalculatorImplTest.kt$CalculatorImplTest$(gap = "2", table = "2", startHeight = "1.2", startAngle = "30", finishHeight = "0.8", finishAngle = "18", startSpeed = "27.5")</ID>
+    <ID>ArgumentListWrapping:DBSource.kt$DBSourceImpl$(gapId)</ID>
+    <ID>ArgumentListWrapping:UtilsTest.kt$UtilsTest$( gap = "2", table = "3", startHeight = "1.2", startAngle = "30", finishHeight = "0.8", finishAngle = "18", startSpeed = "36" )</ID>
+    <ID>ArgumentListWrapping:UtilsTest.kt$UtilsTest$(finishHeight = 5.0, finishAngle = 30.0, speedKmH = 1.0, startAngle = 10.0)</ID>
+    <ID>ArgumentListWrapping:UtilsTest.kt$UtilsTest$(params(finishHeight = 5.0, finishAngle = 30.0, speedKmH = 1.0, startAngle = 10.0))</ID>
+    <ID>CommentSpacing:Utils.kt$//скорость в точке касания приземления</ID>
+    <ID>CommentSpacing:Utils.kt$//точка пересечения траектории полёта и линии приземления (для расчёта жесткости приземления)</ID>
+    <ID>CommentSpacing:Utils.kt$//угол касания</ID>
+    <ID>Filename:InputParametersInSi.kt$com.github.raininforest.usecases.calculator.InputParametersInSi.kt</ID>
+    <ID>FinalNewline:CalculatorImpl.kt$com.github.raininforest.usecases.calculator.CalculatorImpl.kt</ID>
+    <ID>FinalNewline:Constants.kt$com.github.raininforest.usecases.calculator.Constants.kt</ID>
+    <ID>FinalNewline:GapCalculatorApplication.kt$com.github.raininforest.android.GapCalculatorApplication.kt</ID>
+    <ID>FinalNewline:GapDetailsRepository.kt$com.github.raininforest.data.repository.GapDetailsRepository.kt</ID>
+    <ID>FinalNewline:GapListViewModel.kt$com.github.raininforest.ui.list.GapListViewModel.kt</ID>
+    <ID>FinalNewline:ParameterComposer.kt$com.github.raininforest.usecases.parametercomposer.ParameterComposer.kt</ID>
+    <ID>FinalNewline:StringConstants.kt$com.github.raininforest.data.StringConstants.kt</ID>
+    <ID>FinalNewline:Utils.kt$com.github.raininforest.usecases.calculator.Utils.kt</ID>
+    <ID>Indentation:CalculatorImpl.kt$CalculatorImpl$ </ID>
+    <ID>LongMethod:ChartView.kt$@Composable fun ChartView( paddingValues: PaddingValues, data: GapDetailsState.GapDetailsData )</ID>
+    <ID>MatchingDeclarationName:InputParametersInSi.kt$InputParameters</ID>
+    <ID>MaxLineLength:DBSource.kt$DBSourceImpl$?.</ID>
+    <ID>MaxLineLength:GapEditVMFactory.kt$GapEditVMFactory$internal</ID>
+    <ID>MaxLineLength:GapListVMFactory.kt$GapListVMFactory$internal</ID>
+    <ID>MaxLineLength:UtilsTest.kt$UtilsTest$val landing = calculateLandingParams(params(finishHeight = 5.0, finishAngle = 30.0, speedKmH = 1.0, startAngle = 10.0))</ID>
+    <ID>MaximumLineLength:DBSource.kt$DBSourceImpl$ </ID>
+    <ID>MaximumLineLength:GapEditVMFactory.kt$GapEditVMFactory$internal</ID>
+    <ID>MaximumLineLength:GapListVMFactory.kt$GapListVMFactory$internal</ID>
+    <ID>MaximumLineLength:UtilsTest.kt$UtilsTest$ </ID>
+    <ID>MultiLineIfElse:Utils.kt$abs(finishHeightInMeters / tan(finishAngleInRads))</ID>
+    <ID>MultiLineIfElse:Utils.kt$abs(finishMinY / tan(finishAngleInRads))</ID>
+    <ID>NewLineAtEndOfFile:CalculatorImpl.kt$com.github.raininforest.usecases.calculator.CalculatorImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:Constants.kt$com.github.raininforest.usecases.calculator.Constants.kt</ID>
+    <ID>NewLineAtEndOfFile:GapCalculatorApplication.kt$com.github.raininforest.android.GapCalculatorApplication.kt</ID>
+    <ID>NewLineAtEndOfFile:GapDetailsRepository.kt$com.github.raininforest.data.repository.GapDetailsRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:GapListViewModel.kt$com.github.raininforest.ui.list.GapListViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:ParameterComposer.kt$com.github.raininforest.usecases.parametercomposer.ParameterComposer.kt</ID>
+    <ID>NewLineAtEndOfFile:StringConstants.kt$com.github.raininforest.data.StringConstants.kt</ID>
+    <ID>NewLineAtEndOfFile:Utils.kt$com.github.raininforest.usecases.calculator.Utils.kt</ID>
+    <ID>NoConsecutiveBlankLines:Calculator.kt$ </ID>
+    <ID>NoConsecutiveBlankLines:Chart.kt$ </ID>
+    <ID>NoConsecutiveBlankLines:DBSource.kt$DBSourceImpl$ </ID>
+    <ID>NoConsecutiveBlankLines:GapDetailsState.kt$ </ID>
+    <ID>NoConsecutiveBlankLines:GapEditViewModel.kt$GapEditViewModel$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:GapEditScreen.kt$ </ID>
+    <ID>NoEmptyFirstLineInMethodBlock:GapListScreen.kt$ </ID>
+    <ID>PropertyWrapping:UtilsTest.kt$UtilsTest$val landing = calculateLandingParams(params(finishHeight = 5.0, finishAngle = 30.0, speedKmH = 1.0, startAngle = 10.0))</ID>
+    <ID>SpacingAroundColon:CustomVerticalItemPlacer.kt$CustomVerticalItemPlacer$:</ID>
+    <ID>SpacingAroundColon:GapDetailsState.kt$GapDetailsState.GapDetailsEmpty$:</ID>
+    <ID>SpacingAroundColon:GapEditVMFactory.kt$GapEditVMFactory$:</ID>
+    <ID>SpacingAroundColon:GapListVMFactory.kt$GapListVMFactory$:</ID>
+    <ID>SwallowedException:GapEditViewModel.kt$GapEditViewModel$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:GapEditViewModel.kt$GapEditViewModel$t: Throwable</ID>
+    <ID>Wrapping:CalculatorImpl.kt$CalculatorImpl$(</ID>
+    <ID>Wrapping:CalculatorImplTest.kt$CalculatorImplTest$(</ID>
+  </CurrentIssues>
+</SmellBaseline>

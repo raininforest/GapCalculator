@@ -1,15 +1,14 @@
 [versions]
-# common
-androidGradlePlugin = "8.1.0"
-kotlin = "1.9.10"
-kotlinxCoroutinesCore = "1.7.3"
-kotlinxDatetime = "0.4.1"
-lifecycleViewmodelKtx = "2.6.2"
-compose = "1.5.1"
-activityCompose = "1.7.2"
-navigationCompose = "2.7.2"
-sqlDelight = "2.0.0"
-vicoChart = "1.12.0"
+androidGradlePlugin = "9.4.1"
+kotlin = "2.4.21"
+kotlinxCoroutines = "1.11.0"
+kotlinxDatetime = "0.8.0"
+lifecycle = "2.11.0"
+compose = "1.12.1"
+activityCompose = "1.13.0"
+navigationCompose = "2.10.2"
+sqlDelight = "2.4.1"
+detekt = "1.23.8"
 
 [libraries]
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
@@ -18,17 +17,24 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose" }
 androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-patrykandpatrick-vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vicoChart" }
-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
+sqldelight-async-extensions = { module = "app.cash.sqldelight:async-extensions", version.ref = "sqlDelight" }
+sqldelight-web-worker-driver = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqlDelight" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
+
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 sql-delight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

@@ -16,3 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "GapCalculator"
 include(":androidGapCalc")
 include(":sharedGapCalc")
+include(":webGapCalc")
+

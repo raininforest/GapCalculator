@@ -8,3 +8,13 @@ captures
 .cxx
 local.properties
 xcuserdata
+# release signing
+keystore.properties
+*.jks
+*.keystore
+
+# kotlin/js
+node_modules
+
+# kotlin tooling
+.kotlin

@@ -1,0 +1,5 @@
+included:
+  - iosGapCalc/iosGapCalc
+line_length: 140
+disabled_rules:
+  - identifier_name # constants like PADDING follow the Android side
