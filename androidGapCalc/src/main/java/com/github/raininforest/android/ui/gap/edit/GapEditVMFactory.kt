@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.raininforest.data.repository.GapEditRepository
 import com.github.raininforest.ui.edit.GapEditViewModel
 
-internal class GapEditVMFactory(private val gapEditRepository: GapEditRepository): ViewModelProvider.NewInstanceFactory() {
+internal class GapEditVMFactory(private val gapEditRepository: GapEditRepository) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return GapEditViewModel(gapEditRepository = gapEditRepository) as T
     }

@@ -69,10 +69,13 @@ fun GapCalcTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = darkestGray.toArgb()
+            // system bars blend into the screen background instead of being a dark strip on a light screen
+            window.statusBarColor = colors.background.toArgb()
+            window.navigationBarColor = colors.background.toArgb()
 
             val insetController = WindowCompat.getInsetsController(window, view)
-            insetController.isAppearanceLightStatusBars = false
+            insetController.isAppearanceLightStatusBars = !darkTheme
+            insetController.isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

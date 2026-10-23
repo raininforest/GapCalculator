@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Gap Calculator</string>
+
+    <string name="add">Добавить</string>
+    <string name="edit">Редактировать</string>
+    <string name="apply">Применить</string>
+    <string name="empty">Пусто</string>
+    <string name="no_data">Нет данных</string>
+    <string name="back">Назад</string>
+    <string name="share">Поделиться</string>
+    <string name="untitled">Без названия</string>
+
+    <string name="warning_hard_landing">Приземление будет жестким</string>
+    <string name="warning_early_landing">Похоже, недолёт</string>
+    <string name="warning_big_gap">Большой трамплин</string>
+
+    <string name="param_gap">Гэп</string>
+    <string name="param_table">Стол</string>
+    <string name="param_start_height">Высота вылета</string>
+    <string name="param_start_angle">Угол вылета</string>
+    <string name="param_finish_height">Высота приземления</string>
+    <string name="param_finish_angle">Угол приземления</string>
+    <string name="param_start_speed">Скорость разгона</string>
+    <string name="param_speed_0">V0</string>
+    <string name="param_r_start_min">R вылета min</string>
+    <string name="param_r_start">R вылета</string>
+    <string name="param_h_where_start">Высота разгона</string>
+    <string name="param_g_landing">G приземления</string>
+
+    <string name="unit_meter">м</string>
+    <string name="unit_degree">град.</string>
+    <string name="unit_kmh">км/ч</string>
+</resources>

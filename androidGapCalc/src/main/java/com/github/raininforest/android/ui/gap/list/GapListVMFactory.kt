@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.raininforest.data.repository.GapListRepository
 import com.github.raininforest.ui.list.GapListViewModel
 
-internal class GapListVMFactory(private val gapListRepository: GapListRepository): ViewModelProvider.NewInstanceFactory() {
+internal class GapListVMFactory(private val gapListRepository: GapListRepository) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return GapListViewModel(gapListRepository = gapListRepository) as T
     }

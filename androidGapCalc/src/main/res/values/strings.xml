@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Gap Calculator</string>
+
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="apply">Apply</string>
+    <string name="empty">Empty</string>
+    <string name="no_data">No data</string>
+    <string name="back">Back</string>
+    <string name="share">Share</string>
+    <string name="untitled">Untitled</string>
+
+    <string name="warning_hard_landing">The landing will be hard</string>
+    <string name="warning_early_landing">Looks like an undershoot</string>
+    <string name="warning_big_gap">Big jump</string>
+
+    <string name="param_gap">Gap</string>
+    <string name="param_table">Table</string>
+    <string name="param_start_height">Takeoff height</string>
+    <string name="param_start_angle">Takeoff angle</string>
+    <string name="param_finish_height">Landing height</string>
+    <string name="param_finish_angle">Landing angle</string>
+    <string name="param_start_speed">Run-up speed</string>
+    <string name="param_speed_0">V0</string>
+    <string name="param_r_start_min">Takeoff R min</string>
+    <string name="param_r_start">Takeoff R</string>
+    <string name="param_h_where_start">Run-up height</string>
+    <string name="param_g_landing">Landing G</string>
+
+    <string name="unit_meter">m</string>
+    <string name="unit_degree">deg.</string>
+    <string name="unit_kmh">km/h</string>
+</resources>

@@ -30,9 +30,11 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.github.raininforest.android.R
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,7 +55,6 @@ import com.github.raininforest.ui.list.data.GapListState
 
 private const val PADDING = 16
 private const val BUTTON_HEIGHT = 48
-private const val ITEM_CORNER_RADIUS = 32
 private const val ITEM_SPACING = 8
 private const val BUTTON_STROKE_WIDTH = 1
 
@@ -65,7 +66,8 @@ fun GapListScreen(
         factory = GapListVMFactory(gapListRepository = deps.gapListRepository)
     )
 ) {
-    gapListViewModel.fetchList()
+    // the view-model survives navigation: reload when the screen (re)enters composition, e.g. after editing
+    LaunchedEffect(Unit) { gapListViewModel.fetchList() }
 
     val gapListState by gapListViewModel.gapList.collectAsState()
 
@@ -90,7 +92,6 @@ fun Content(
     onGapClicked: (gapId: Long) -> Unit,
     onGapRemoveClicked: (gapId: Long) -> Unit
 ) {
-
     when (gapListState) {
         is GapListState.GapListData -> Data(
             currentState = gapListState,
@@ -113,7 +114,7 @@ fun FloatingButton(onAddClicked: () -> Unit) {
         colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
     ) {
         Text(
-            text = "Добавить",
+            text = stringResource(R.string.add),
             style = MaterialTheme.typography.body1
         )
     }
@@ -163,7 +164,7 @@ fun GapListItemView(
     onGapClicked: (gapId: Long) -> Unit,
     onGapRemoveClicked: (gapId: Long) -> Unit
 ) {
-    val shape = RoundedCornerShape(size = ITEM_CORNER_RADIUS.dp)
+    val shape = RoundedCornerShape(percent = 50) // concentric with the round remove button
     Card(shape = shape) {
         Row(
             modifier = Modifier
@@ -177,7 +178,7 @@ fun GapListItemView(
         ) {
             Column {
                 Text(
-                    text = item.title,
+                    text = item.title.ifBlank { stringResource(R.string.untitled) },
                     color = MaterialTheme.colors.primary,
                     style = MaterialTheme.typography.body1
                 )
@@ -200,7 +201,7 @@ fun GapListItemView(
                 border = BorderStroke(BUTTON_STROKE_WIDTH.dp, MaterialTheme.colors.onPrimary),
                 colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colors.onPrimary)
             ) {
-                Icon(imageVector = Icons.Default.Clear, "")
+                Icon(painter = painterResource(R.drawable.ic_close), contentDescription = "")
             }
         }
     }

@@ -11,6 +11,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.github.raininforest.android.R
+import com.github.raininforest.android.ui.gap.common.shareText
+import com.github.raininforest.android.ui.gap.common.textRes
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,22 +39,20 @@ fun GapDetailsScreen(
     onEditClicked: (gapId: Long?) -> Unit = {},
     onBackClicked: () -> Unit = {},
     gapDetailsViewModel: GapDetailsViewModel = viewModel(
-        factory = GapDetailsVMFactory(
-            gapDetailsRepository = deps.gapDetailsRepository,
-            shareService = deps.shareService
-        )
+        factory = GapDetailsVMFactory(gapDetailsRepository = deps.gapDetailsRepository)
     )
 ) {
-    gapId?.let(gapDetailsViewModel::fetchGapDetails)
+    LaunchedEffect(gapId) { gapId?.let(gapDetailsViewModel::fetchGapDetails) }
     val gapDetailsState by gapDetailsViewModel.gapDetails.collectAsState()
 
+    val context = LocalContext.current
     val topBarTitle: String
     val mainContentComposable: @Composable (paddingValues: PaddingValues) -> Unit
     val snackbarHostState = remember { SnackbarHostState() }
 
     when (val currentState = gapDetailsState) {
         is GapDetailsState.GapDetailsData -> {
-            topBarTitle = currentState.gapTitle
+            topBarTitle = currentState.gapTitle.ifBlank { stringResource(R.string.untitled) }
             mainContentComposable = {
                 ChartView(
                     paddingValues = it,
@@ -59,9 +62,14 @@ fun GapDetailsScreen(
             currentState.ShowWarnings(snackbarHostState = snackbarHostState)
         }
 
-        else -> {
-            topBarTitle = "Нет данных"
+        is GapDetailsState.GapDetailsEmpty -> {
+            topBarTitle = stringResource(R.string.no_data)
             mainContentComposable = { NoData() }
+        }
+
+        is GapDetailsState.Loading -> {
+            topBarTitle = ""
+            mainContentComposable = {}
         }
     }
 
@@ -70,7 +78,11 @@ fun GapDetailsScreen(
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
-                onShareClicked = { gapDetailsViewModel.onShareClicked() },
+                onShareClicked = {
+                    (gapDetailsState as? GapDetailsState.GapDetailsData)?.let {
+                        deps.shareService.share(context.shareText(it.textData))
+                    }
+                },
                 titleComposable = { modifier ->
                     Text(
                         text = topBarTitle,
@@ -84,7 +96,7 @@ fun GapDetailsScreen(
         content = mainContentComposable,
         bottomBar = {
             BottomBar(
-                buttonText = "Редактировать",
+                buttonText = stringResource(R.string.edit),
                 onButtonClicked = { onEditClicked.invoke(gapId) }
             )
         }
@@ -94,9 +106,10 @@ fun GapDetailsScreen(
 @Composable
 private fun GapDetailsState.GapDetailsData.ShowWarnings(snackbarHostState: SnackbarHostState) {
     if (warnings.isNotEmpty()) {
-        LaunchedEffect(key1 = this) {
+        val message = warnings.map { stringResource(it.textRes()) }.joinToString("\n")
+        LaunchedEffect(key1 = this, key2 = message) {
             snackbarHostState.showSnackbar(
-                message = warnings.joinToString("\n"),
+                message = message,
                 duration = SnackbarDuration.Short
             )
         }

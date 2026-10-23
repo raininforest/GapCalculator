@@ -21,8 +21,17 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.Icon
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.github.raininforest.android.R
+import com.github.raininforest.android.ui.gap.common.iconRes
+import com.github.raininforest.android.ui.gap.common.inputLabel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,24 +50,14 @@ import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.customTextSelectionColors
 import com.github.raininforest.android.ui.gap.common.BottomBar
 import com.github.raininforest.android.ui.gap.common.TopBar
-import com.github.raininforest.data.DEGREE
-import com.github.raininforest.data.FINISH_ANGLE
-import com.github.raininforest.data.FINISH_HEIGHT
-import com.github.raininforest.data.GAP
-import com.github.raininforest.data.KMH
-import com.github.raininforest.data.METER
-import com.github.raininforest.data.START_ANGLE
-import com.github.raininforest.data.START_HEIGHT
-import com.github.raininforest.data.START_SPEED
-import com.github.raininforest.data.TABLE
+import com.github.raininforest.ui.edit.GapEditField
 import com.github.raininforest.ui.edit.GapEditViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val PADDING = 16
 private const val ITEM_SPACING = 8
 private const val ITEM_HEIGHT = 72
 private const val ITEM_CORNER_RADIUS = 32
-private const val ITEM_LABEL_WIDTH = 192
+private const val ITEM_ICON_SIZE = 40
 private const val ITEM_FIELD_WIDTH = 124
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -71,7 +70,7 @@ fun GapEditScreen(
         factory = GapEditVMFactory(gapEditRepository = deps.gapEditRepository)
     )
 ) {
-    gapId?.let(gapEditViewModel::fetchGapParameters)
+    LaunchedEffect(gapId) { gapId?.let(gapEditViewModel::fetchGapParameters) }
 
     Scaffold(
         topBar = {
@@ -87,6 +86,8 @@ fun GapEditScreen(
                             onValueChange = { newText ->
                                 gapEditViewModel.gapTitleChanged(newText)
                             },
+                            placeholder = { Text(stringResource(R.string.untitled)) },
+                            singleLine = true,
                             modifier = modifier
                         )
                     }
@@ -99,11 +100,8 @@ fun GapEditScreen(
         },
         bottomBar = {
             BottomBar(
-                onButtonClicked = {
-                    gapEditViewModel.onApplyClicked()
-                    onApplyClicked.invoke()
-                },
-                buttonText = "Применить"
+                onButtonClicked = { gapEditViewModel.onApplyClicked(onSaved = onApplyClicked) },
+                buttonText = stringResource(R.string.apply)
             )
         }
     )
@@ -118,14 +116,9 @@ fun Data(gapEditViewModel: GapEditViewModel) {
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
         ) {
-
-            GapEditItem(label = "$GAP, $METER", vmState = gapEditViewModel.gapState)
-            GapEditItem(label = "$TABLE, $METER", vmState = gapEditViewModel.tableState)
-            GapEditItem(label = "$START_HEIGHT, $METER", vmState = gapEditViewModel.startHeightState)
-            GapEditItem(label = "$START_ANGLE, $DEGREE", vmState = gapEditViewModel.startAngleState)
-            GapEditItem(label = "$FINISH_HEIGHT, $METER", vmState = gapEditViewModel.finishHeightState)
-            GapEditItem(label = "$FINISH_ANGLE, $DEGREE", vmState = gapEditViewModel.finishAngleState)
-            GapEditItem(label = "$START_SPEED, $KMH", vmState = gapEditViewModel.startSpeedState)
+            GapEditField.entries.forEach { field ->
+                GapEditItem(field = field, viewModel = gapEditViewModel)
+            }
 
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -133,7 +126,7 @@ fun Data(gapEditViewModel: GapEditViewModel) {
 }
 
 @Composable
-fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
+fun GapEditItem(field: GapEditField, viewModel: GapEditViewModel) {
     Row(
         modifier = Modifier
             .height(ITEM_HEIGHT.dp)
@@ -142,29 +135,38 @@ fun GapEditItem(label: String, vmState: MutableStateFlow<String>) {
             .background(MaterialTheme.colors.onPrimary),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        field.parameter.iconRes()?.let { iconRes ->
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier
+                    .padding(start = PADDING.dp)
+                    .size(ITEM_ICON_SIZE.dp)
+            )
+        }
         Text(
             modifier = Modifier
-                .padding(start = PADDING.dp)
-                .width(ITEM_LABEL_WIDTH.dp),
+                .padding(horizontal = ITEM_SPACING.dp)
+                .weight(1f),
             color = MaterialTheme.colors.primary,
-            text = label,
-            style = MaterialTheme.typography.body2.copy(fontSize = 20.sp),
+            text = LocalContext.current.inputLabel(field.parameter),
+            style = MaterialTheme.typography.body2.copy(fontSize = 18.sp),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.weight(1f))
 
         CompositionLocalProvider(
             LocalTextSelectionColors provides customTextSelectionColors,
         ) {
-            val state by vmState.collectAsState()
+            val state by viewModel.fieldState(field).collectAsState()
             OutlinedTextField(
                 modifier = Modifier
                     .padding(end = PADDING.dp)
                     .width(ITEM_FIELD_WIDTH.dp),
                 value = state,
                 onValueChange = { inputString ->
-                    vmState.value = inputString
+                    viewModel.onFieldChanged(field, inputString)
                 },
                 textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End, fontSize = 28.sp),
                 colors = TextFieldDefaults.textFieldColors(
