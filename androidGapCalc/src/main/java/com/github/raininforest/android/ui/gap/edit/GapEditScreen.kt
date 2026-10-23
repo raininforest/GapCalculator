@@ -1,11 +1,12 @@
 package com.github.raininforest.android.ui.gap.edit
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,7 +61,6 @@ private const val ITEM_CORNER_RADIUS = 32
 private const val ITEM_ICON_SIZE = 40
 private const val ITEM_FIELD_WIDTH = 124
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GapEditScreen(
     gapId: Long?,
@@ -73,6 +73,8 @@ fun GapEditScreen(
     LaunchedEffect(gapId) { gapId?.let(gapEditViewModel::fetchGapParameters) }
 
     Scaffold(
+        // the keyboard pushes the whole screen, including the Apply button, up instead of covering it
+        modifier = Modifier.imePadding(),
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
@@ -95,8 +97,9 @@ fun GapEditScreen(
                 hasShare = false
             )
         },
-        content = {
-            Data(gapEditViewModel)
+        content = { paddingValues ->
+            // the list ends above the Apply button (and the keyboard) instead of running under them
+            Data(gapEditViewModel, Modifier.padding(paddingValues))
         },
         bottomBar = {
             BottomBar(
@@ -108,19 +111,18 @@ fun GapEditScreen(
 }
 
 @Composable
-fun Data(gapEditViewModel: GapEditViewModel) {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun Data(gapEditViewModel: GapEditViewModel, modifier: Modifier = Modifier) {
+    Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .padding(horizontal = PADDING.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
         ) {
             GapEditField.entries.forEach { field ->
                 GapEditItem(field = field, viewModel = gapEditViewModel)
             }
-
-            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

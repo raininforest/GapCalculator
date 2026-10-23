@@ -3,7 +3,12 @@ package com.github.raininforest.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +23,8 @@ import com.github.raininforest.navigation.NavDestinations
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // draw behind the system bars on every API level; the screens add the insets themselves (see Main)
+        enableEdgeToEdge()
         setContent {
             GapCalcTheme {
                 Main()
@@ -30,7 +37,12 @@ class MainActivity : ComponentActivity() {
 fun Main() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = NavDestinations.GAP_LIST.link) {
+    // status/navigation bars are padded here; the keyboard is handled by the screens that have text fields
+    NavHost(
+        navController = navController,
+        startDestination = NavDestinations.GAP_LIST.link,
+        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)
+    ) {
         composable(route = NavDestinations.GAP_LIST.link) {
             GapListScreen(
                 onGapClicked = { gapId ->
