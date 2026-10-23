@@ -4,4 +4,3 @@ data class Chart(
     val chartConfig: ChartConfig,
     val function: List<Point>
 )
-

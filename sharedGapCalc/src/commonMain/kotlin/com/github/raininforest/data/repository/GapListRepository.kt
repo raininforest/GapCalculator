@@ -3,9 +3,9 @@ package com.github.raininforest.data.repository
 import com.github.raininforest.data.UNTITLED
 import com.github.raininforest.data.entity.GapListItemEntity
 import com.github.raininforest.db.DBSource
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 class GapListRepository(private val dbSource: DBSource) {
     suspend fun gapList(): List<GapListItemEntity> = dbSource.getGapList()

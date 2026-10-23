@@ -5,6 +5,7 @@ import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.data.entity.OutputParameters
 import kotlin.math.abs
 import kotlin.math.atan
+import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.pow
@@ -26,7 +27,7 @@ internal fun GapParametersEntity.convertToSINumbers(): InputParameters =
         startAngleInDegrees = startAngle.toDouble(),
         startAngleInRads = startAngle.toDouble().degreesToRads(),
         finishHeightInMeters = finishHeight.toDouble(),
-        finishAngleInDegrees = startAngle.toDouble(),
+        finishAngleInDegrees = finishAngle.toDouble(),
         finishAngleInRads = finishAngle.toDouble().degreesToRads(),
         speedInMPS = startSpeed.toDouble().kmHtoSI()
     )
@@ -60,8 +61,11 @@ internal val InputParameters.startLengthMin: Double
     get() = startRadiusMin * sin(startAngleInRads)
 
 internal val InputParameters.finishLength: Double
-    get() = if (finishHeightInMeters != 0.0) abs(finishHeightInMeters / tan(finishAngleInRads))
-    else abs(finishMinY / tan(finishAngleInRads))
+    get() = if (finishHeightInMeters != 0.0) {
+        abs(finishHeightInMeters / tan(finishAngleInRads))
+    } else {
+        abs(finishMinY / tan(finishAngleInRads))
+    }
 
 internal val InputParameters.finishMinY: Double
     get() = when {
@@ -96,11 +100,11 @@ internal fun calculateLandingParams(inParams: InputParameters): LandingParams {
         gLanding = 0.0
         landingPoint = 0.0
     } else {
-        //точка пересечения траектории полёта и линии приземления (для расчёта жесткости приземления)
+        // точка пересечения траектории полёта и линии приземления (для расчёта жесткости приземления)
         val xK = findRoot(diskriminant, a, b)
-        //скорость в точке касания приземления
+        // скорость в точке касания приземления
         val vk = sqrt(v0x * v0x + (v0y - g * xK / v0x).pow(2))
-        //угол касания
+        // угол касания
         val fi = atan((v0y - g * xK / v0x) / v0x)
         // жесткость приземления, как эквивалентная высота дропа на плоскач
         val hEqui = (vk * sin(abs(abs(fi) - finishAngle))).pow(2) / (2 * g)

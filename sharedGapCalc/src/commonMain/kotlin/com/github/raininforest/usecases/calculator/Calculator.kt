@@ -6,4 +6,3 @@ import com.github.raininforest.data.entity.GapParametersEntity
 interface Calculator {
     suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult
 }
-

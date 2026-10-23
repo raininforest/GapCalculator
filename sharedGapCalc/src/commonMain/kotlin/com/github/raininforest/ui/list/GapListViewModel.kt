@@ -1,68 +1,56 @@
 package com.github.raininforest.ui.list
 
-import com.github.raininforest.data.repository.GapListRepository
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.raininforest.data.entity.GapListItemEntity
-import com.github.raininforest.ui.BaseViewModel
+import com.github.raininforest.data.repository.GapListRepository
 import com.github.raininforest.ui.list.data.GapListItem
 import com.github.raininforest.ui.list.data.GapListState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GapListViewModel(
     private val gapListRepository: GapListRepository
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val _gapListState = MutableStateFlow<GapListState>(GapListState.GapListEmpty)
     val gapList: StateFlow<GapListState>
         get() = _gapListState
 
+    private var fetchJob: Job? = null
+
     init {
-        coroutineScope.launch(Dispatchers.IO) {
-            updateList()
-        }
+        fetchList()
     }
 
     fun removeGapClicked(id: Long) {
-        coroutineScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             gapListRepository.removeGap(id)
-            updateList()
+            fetchList()
         }
     }
 
     fun addClicked() {
-        coroutineScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             gapListRepository.addGap()
-            updateList()
+            fetchList()
         }
     }
 
+    /** Reloads the list; a newer request cancels the one still in flight so stale results can't overwrite it. */
     fun fetchList() {
-        coroutineScope.launch(Dispatchers.IO) {
-            updateList()
-        }
-    }
-
-    private suspend fun updateList() {
-        val uiGapList = gapListRepository.gapList().toUiState()
-        withContext(Dispatchers.Main) {
-            _gapListState.value = uiGapList
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            _gapListState.value = gapListRepository.gapList().toUiState()
         }
     }
 
     private fun List<GapListItemEntity>.toUiState(): GapListState =
-        if (this.isNotEmpty()) {
+        if (isNotEmpty()) {
             GapListState.GapListData(
-                gapList = map {
-                    GapListItem(
-                        id = it.id,
-                        title = it.title,
-                        date = it.date
-                    )
-                }
+                gapList = map { GapListItem(id = it.id, title = it.title, date = it.date) }
             )
         } else {
             GapListState.GapListEmpty

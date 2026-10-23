@@ -7,17 +7,27 @@ import com.github.raininforest.data.entity.ChartData
 import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.data.entity.OutputParameters
 import com.github.raininforest.data.entity.Point
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.tan
 
-internal class CalculatorImpl : Calculator {
+internal class CalculatorImpl(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
+) : Calculator {
 
     private companion object {
         const val DEFAULT_START_LENGTH = 4.0
         const val DEFAULT_FINISH_LENGTH = 4.0
         const val X_STEP = 0.1
+
+        // besides the main flight path, paths with the takeoff angle off by this much are drawn (the old app did too)
+        const val ANGLE_TOLERANCE_DEGREES = 5.0
+        const val VERTICAL_LAUNCH_DEGREES = 89
 
         val FALLBACK_RESULT = CalculationResult(
             outputParameters = OutputParameters(
@@ -36,13 +46,17 @@ internal class CalculatorImpl : Calculator {
         )
     }
 
-    override suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult {
-        return try {
-            innerCalculate(gapInputParameters)
-        } catch (_: Throwable) {
-            FALLBACK_RESULT
+    override suspend fun calculate(gapInputParameters: GapParametersEntity): CalculationResult =
+        withContext(dispatcher) {
+            try {
+                innerCalculate(gapInputParameters)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                // malformed input (non-numeric text, division by zero, ...): show empty result
+                FALLBACK_RESULT
+            }
         }
-    }
 
     private fun innerCalculate(gapInputParameters: GapParametersEntity): CalculationResult {
         val inputParams = gapInputParameters.convertToSINumbers()
@@ -77,7 +91,7 @@ internal class CalculatorImpl : Calculator {
     ): ChartData {
         val resultCharts = mutableListOf<Chart>()
 
-        if (inParams.isNotDrop && inParams.startAngleInDegrees < 89) {
+        if (inParams.isNotDrop && inParams.startAngleInDegrees < VERTICAL_LAUNCH_DEGREES) {
             resultCharts.add(buildRStart(inParams, outParams))
             resultCharts.add(buildRMinStart(inParams, outParams))
         } else if (inParams.isDrop) {
@@ -85,56 +99,53 @@ internal class CalculatorImpl : Calculator {
         }
 
         resultCharts.add(buildFinish(inParams))
-        resultCharts.add(buildTrace(inParams, outParams))
+
+        if (inParams.startAngleInDegrees < VERTICAL_LAUNCH_DEGREES) {
+            listOf(-ANGLE_TOLERANCE_DEGREES, ANGLE_TOLERANCE_DEGREES)
+                .map { inParams.startAngleInDegrees + it }
+                .filter { it < VERTICAL_LAUNCH_DEGREES }
+                .map { inParams.copy(startAngleInDegrees = it, startAngleInRads = it.degreesToRads()) }
+                .forEach { resultCharts.add(buildTrace(it, ChartConfig.TOLERANCE_TRACE)) }
+        }
+        resultCharts.add(buildTrace(inParams, ChartConfig.MAIN_TRACE))
 
         return ChartData(resultCharts)
     }
 
-    private fun buildTrace(inParams: InputParameters, outParams: OutputParameters): Chart {
+    private fun buildTrace(inParams: InputParameters, config: ChartConfig): Chart {
         val resultFunction = mutableListOf<Point>()
-        val startX = 0.0
         val endX = DEFAULT_FINISH_LENGTH + inParams.gapLengthInMeters
-        var x = startX
+        val bottomY = chartBottom(inParams)
 
-        if (inParams.startAngleInDegrees < 89) {
+        if (inParams.startAngleInDegrees < VERTICAL_LAUNCH_DEGREES) {
+            var x = 0.0
             while (x < endX) {
-                resultFunction.add(
-                    Point(
-                        x = x,
-                        y = inParams.startHeightInMeters + flightFx(
-                            x = x,
-                            v0x = outParams.v0x,
-                            v0y = outParams.v0y
-                        )
-                    )
-                )
+                val y = inParams.startHeightInMeters + flightFx(x = x, v0x = inParams.v0x, v0y = inParams.v0y)
+                if (y < bottomY) break // below the visible area, the path is not interesting any more
+                resultFunction.add(Point(x = x, y = y))
                 x += X_STEP
             }
         } else {
             // вылет вертикально вверх
+            resultFunction.add(Point(x = 0.0, y = inParams.startHeightInMeters))
             resultFunction.add(
-                Point(
-                    x = 0.0,
-                    y = inParams.startHeightInMeters
-                )
-            )
-            resultFunction.add(
-                Point(
-                    x = 0.0,
-                    y = (inParams.startHeightInMeters + (outParams.v0y.pow(2)) / (2 * g))
-                )
+                Point(x = 0.0, y = inParams.startHeightInMeters + (inParams.v0y.pow(2)) / (2 * g))
             )
         }
 
-        return Chart(
-            chartConfig = ChartConfig.MAIN_TRACE,
-            function = resultFunction
-        )
+        return Chart(chartConfig = config, function = resultFunction)
     }
+
+    private fun chartBottom(inParams: InputParameters): Double =
+        if (inParams.finishHeightInMeters < 0) {
+            -ceil(abs(inParams.finishHeightInMeters)) - 2
+        } else {
+            -1.0
+        }
 
     private fun buildRStart(inParams: InputParameters, outParams: OutputParameters) =
         Chart(
-            chartConfig = ChartConfig.MAIN_GAP_ELEMENTS,
+            chartConfig = ChartConfig.RAMP,
             function = buildRFunction(
                 xRange = inParams.startLength,
                 radius = outParams.startRadius
@@ -205,11 +216,7 @@ internal class CalculatorImpl : Calculator {
         val startX = inParams.gapLengthInMeters - inParams.tableLengthInMeters
         val tableEndX = inParams.gapLengthInMeters
         val endX = DEFAULT_FINISH_LENGTH + inParams.gapLengthInMeters
-        val minY = if (inParams.finishHeightInMeters < 0) {
-            -ceil(abs(inParams.finishHeightInMeters)) - 2
-        } else {
-            -1.0
-        }
+        val minY = chartBottom(inParams)
 
         resultFunction.add(
             Point(
@@ -234,8 +241,10 @@ internal class CalculatorImpl : Calculator {
         } else {
             resultFunction.add(
                 Point(
-                    x = (inParams.gapLengthInMeters + (abs(minY) + inParams.finishHeightInMeters) /
-                            abs(tan(inParams.finishAngleInRads))),
+                    x = (
+                        inParams.gapLengthInMeters + (abs(minY) + inParams.finishHeightInMeters) /
+                            abs(tan(inParams.finishAngleInRads))
+                        ),
                     y = minY
                 )
             )

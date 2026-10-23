@@ -1,16 +1,15 @@
 package com.github.raininforest.ui.edit
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.raininforest.data.entity.GapParametersEntity
 import com.github.raininforest.data.repository.GapEditRepository
-import com.github.raininforest.ui.BaseViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseViewModel() {
+class GapEditViewModel(private val gapEditRepository: GapEditRepository) : ViewModel() {
 
     private companion object {
         const val DEFAULT_ZERO_VALUE = "0.0"
@@ -22,32 +21,31 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseV
     val gapTitleState: StateFlow<String>
         get() = _gapTitleState
 
-    var gapState = MutableStateFlow<String>("")
-    var tableState = MutableStateFlow<String>("")
-    var startHeightState = MutableStateFlow<String>("")
-    var startAngleState = MutableStateFlow<String>("")
-    var finishHeightState = MutableStateFlow<String>("")
-    var finishAngleState = MutableStateFlow<String>("")
-    var startSpeedState = MutableStateFlow<String>("")
+    private val fields = GapEditField.entries.associateWith { MutableStateFlow("") }
 
+    fun fieldState(field: GapEditField): StateFlow<String> = fields.getValue(field)
+
+    fun onFieldChanged(field: GapEditField, text: String) {
+        fields.getValue(field).value = text
+    }
+    private var fetchJob: Job? = null
 
     fun fetchGapParameters(gapId: Long) {
         cachedGapId = gapId
-        coroutineScope.launch(Dispatchers.IO) {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             val editParametersUi = gapEditRepository.gapEditParameters(gapId)
             val gapTitle = gapEditRepository.gapTitle(gapId)
-            withContext(Dispatchers.Main) {
-                if (editParametersUi != null) {
-                    gapState.value = editParametersUi.gap
-                    tableState.value = editParametersUi.table
-                    startHeightState.value = editParametersUi.startHeight
-                    startAngleState.value = editParametersUi.startAngle
-                    finishHeightState.value = editParametersUi.finishHeight
-                    finishAngleState.value = editParametersUi.finishAngle
-                    startSpeedState.value = editParametersUi.startSpeed
-                }
-                _gapTitleState.value = gapTitle
+            if (editParametersUi != null) {
+                onFieldChanged(GapEditField.GAP, editParametersUi.gap)
+                onFieldChanged(GapEditField.TABLE, editParametersUi.table)
+                onFieldChanged(GapEditField.START_HEIGHT, editParametersUi.startHeight)
+                onFieldChanged(GapEditField.START_ANGLE, editParametersUi.startAngle)
+                onFieldChanged(GapEditField.FINISH_HEIGHT, editParametersUi.finishHeight)
+                onFieldChanged(GapEditField.FINISH_ANGLE, editParametersUi.finishAngle)
+                onFieldChanged(GapEditField.START_SPEED, editParametersUi.startSpeed)
             }
+            _gapTitleState.value = gapTitle
         }
     }
 
@@ -55,34 +53,34 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : BaseV
         _gapTitleState.value = text
     }
 
-    fun onApplyClicked() {
-        coroutineScope.launch(Dispatchers.IO) {
-            cachedGapId?.let {
-                gapEditRepository.changeGapTitle(gapId = it, title = _gapTitleState.value)
-                gapEditRepository.changeGapParameters(gapId = it, parameters = getParams())
-            }
+    /** Saves the edited values; [onSaved] runs after the write finished, so the screen can be closed safely. */
+    fun onApplyClicked(onSaved: () -> Unit) {
+        val gapId = cachedGapId ?: return
+        val title = _gapTitleState.value
+        val parameters = getParams()
+        viewModelScope.launch {
+            gapEditRepository.changeGapTitle(gapId = gapId, title = title)
+            gapEditRepository.changeGapParameters(gapId = gapId, parameters = parameters)
+            onSaved()
         }
     }
 
     private fun getParams() = GapParametersEntity(
-        gap = gapState.value.validateInput(),
-        table = tableState.value,
-        startHeight = startHeightState.value,
-        startAngle = startAngleState.value,
-        finishHeight = finishHeightState.value,
-        finishAngle = finishAngleState.value,
-        startSpeed = startSpeedState.value
+        gap = value(GapEditField.GAP).validateInput(),
+        table = value(GapEditField.TABLE),
+        startHeight = value(GapEditField.START_HEIGHT),
+        startAngle = value(GapEditField.START_ANGLE),
+        finishHeight = value(GapEditField.FINISH_HEIGHT),
+        finishAngle = value(GapEditField.FINISH_ANGLE),
+        startSpeed = value(GapEditField.START_SPEED)
     )
+
+    private fun value(field: GapEditField) = fields.getValue(field).value
 
     private fun String.validateInput(): String {
         val safeVal = this
             .replace(oldChar = ',', newChar = '.')
             .ifEmpty { DEFAULT_ZERO_VALUE }
-        return try {
-            safeVal.toDouble()
-            safeVal
-        } catch (t: Throwable) {
-            DEFAULT_ZERO_VALUE
-        }
+        return if (safeVal.toDoubleOrNull() != null) safeVal else DEFAULT_ZERO_VALUE
     }
 }

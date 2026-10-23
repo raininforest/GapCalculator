@@ -26,10 +26,16 @@ updateGapTitle:
 UPDATE gapTable SET title = ? WHERE id = ?;
 
 insertGap:
-INSERT INTO gapTable VALUES ?;
+INSERT INTO gapTable(title, date) VALUES (?, ?);
+
+lastInsertedRowId:
+SELECT last_insert_rowid();
 
 removeGap:
 DELETE FROM gapTable WHERE id = ?;
+
+removeGapParameters:
+DELETE FROM gapParametersTable WHERE gap_id = ?;
 
 insertGapParameters:
 INSERT INTO gapParametersTable VALUES ?;

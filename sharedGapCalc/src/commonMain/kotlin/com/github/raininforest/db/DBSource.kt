@@ -1,17 +1,23 @@
 package com.github.raininforest.db
 
+import app.cash.sqldelight.async.coroutines.awaitAsList
+import app.cash.sqldelight.async.coroutines.awaitAsOne
+import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
+import com.github.raininforest.DatabaseQueries
 import com.github.raininforest.GapCalcDatabase
 import com.github.raininforest.GapParametersTable
-import com.github.raininforest.GapTable
 import com.github.raininforest.data.FINISH_ANGLE_DEFAULT_VALUE
 import com.github.raininforest.data.FINISH_HEIGHT_DEFAULT_VALUE
 import com.github.raininforest.data.GAP_DEFAULT_VALUE
+import com.github.raininforest.data.LEGACY_UNTITLED
 import com.github.raininforest.data.START_ANGLE_DEFAULT_VALUE
 import com.github.raininforest.data.START_HEIGHT_DEFAULT_VALUE
 import com.github.raininforest.data.START_SPEED_DEFAULT_VALUE
 import com.github.raininforest.data.TABLE_DEFAULT_VALUE
 import com.github.raininforest.data.entity.GapListItemEntity
 import com.github.raininforest.data.entity.GapParametersEntity
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 interface DBSource {
     suspend fun getGapList(): List<GapListItemEntity>
@@ -24,51 +30,44 @@ interface DBSource {
     suspend fun updateGapParameters(gapId: Long, parameters: GapParametersEntity)
 }
 
-class DBSourceImpl(private val db: GapCalcDatabase?) : DBSource {
-    override suspend fun getGapList(): List<GapListItemEntity> =
-        db?.databaseQueries
-            ?.gapList { id, title, date ->
-                GapListItemEntity(id, title, date)
-            }
-            ?.executeAsList() ?: emptyList()
+class DBSourceImpl(
+    private val database: AsyncLazy<GapCalcDatabase>,
+    private val dispatcher: CoroutineDispatcher
+) : DBSource {
 
-    override suspend fun getGap(gapId: Long): GapListItemEntity? =
-        db?.databaseQueries
-            ?.gap(gapId) { id, title, date ->
-                GapListItemEntity(id, title, date)
-            }
-            ?.executeAsOneOrNull()
+    constructor(db: GapCalcDatabase, dispatcher: CoroutineDispatcher) : this(AsyncLazy { db }, dispatcher)
 
-    override suspend fun getGapParameters(gapId: Long): GapParametersEntity? {
-        return db?.databaseQueries
-            ?.gapParametersByGapId(gapId) { _, gl: String, tl: String, sh: String, sa: String, eh: String, ea: String, ss: String ->
-                GapParametersEntity(
-                    gap = gl,
-                    table = tl,
-                    startHeight = sh,
-                    startAngle = sa,
-                    finishHeight = eh,
-                    finishAngle = ea,
-                    startSpeed = ss
-                )
-            }
-            ?.executeAsList()?.firstOrNull()
+    private suspend fun <T> query(block: suspend (GapCalcDatabase, DatabaseQueries) -> T): T =
+        withContext(dispatcher) {
+            val db = database.get()
+            block(db, db.databaseQueries)
+        }
+
+    override suspend fun getGapList(): List<GapListItemEntity> = query { _, queries ->
+        queries.gapList { id, title, date -> GapListItemEntity(id, title.normalizedTitle(), date) }.awaitAsList()
     }
 
+    override suspend fun getGap(gapId: Long): GapListItemEntity? = query { _, queries ->
+        queries.gap(
+            gapId
+        ) { id, title, date -> GapListItemEntity(id, title.normalizedTitle(), date) }.awaitAsOneOrNull()
+    }
 
-    override suspend fun insertGap(title: String, date: String) {
-        db?.transaction {
-            val gapId = getGapId(title, date)
+    override suspend fun getGapParameters(gapId: Long): GapParametersEntity? = query { _, queries ->
+        queries
+            .gapParametersByGapId(gapId) { _, gap, table, startHeight, startAngle, finishHeight, finishAngle, speed ->
+                GapParametersEntity(gap, table, startHeight, startAngle, finishHeight, finishAngle, speed)
+            }
+            .awaitAsList()
+            .firstOrNull()
+    }
 
-            db.databaseQueries.insertGap(
-                GapTable(
-                    id = gapId,
-                    title = title,
-                    date = date
-                )
-            )
+    override suspend fun insertGap(title: String, date: String) = query { db, queries ->
+        db.transaction {
+            queries.insertGap(title = title, date = date)
+            val gapId = queries.lastInsertedRowId().awaitAsOne()
 
-            db.databaseQueries.insertGapParameters(
+            queries.insertGapParameters(
                 GapParametersTable(
                     gap_id = gapId,
                     gap_length = GAP_DEFAULT_VALUE,
@@ -83,29 +82,17 @@ class DBSourceImpl(private val db: GapCalcDatabase?) : DBSource {
         }
     }
 
-    override suspend fun removeGap(gapId: Long) {
-        db?.databaseQueries?.removeGap(gapId)
+    override suspend fun removeGap(gapId: Long) = query { db, queries ->
+        // sqlite foreign keys are off by default, so ON DELETE CASCADE can't be relied on; row ids get reused
+        db.transaction {
+            queries.removeGapParameters(gapId)
+            queries.removeGap(gapId)
+        }
     }
 
-    override suspend fun insertGapParameters(gapId: Long, parameters: GapParametersEntity) {
-        db?.databaseQueries
-            ?.insertGapParameters(
-                gapParametersTable = GapParametersTable(
-                    gap_id = gapId,
-                    gap_length = parameters.gap,
-                    table_length = parameters.table,
-                    start_angle = parameters.startAngle,
-                    start_height = parameters.startHeight,
-                    end_angle = parameters.finishAngle,
-                    end_height = parameters.finishHeight,
-                    start_speed = parameters.startSpeed
-                )
-            )
-    }
-
-    override suspend fun updateGapParameters(gapId: Long, parameters: GapParametersEntity) {
-        db?.databaseQueries
-            ?.updateGapParameters(
+    override suspend fun insertGapParameters(gapId: Long, parameters: GapParametersEntity) = query { _, queries ->
+        queries.insertGapParameters(
+            gapParametersTable = GapParametersTable(
                 gap_id = gapId,
                 gap_length = parameters.gap,
                 table_length = parameters.table,
@@ -115,11 +102,28 @@ class DBSourceImpl(private val db: GapCalcDatabase?) : DBSource {
                 end_height = parameters.finishHeight,
                 start_speed = parameters.startSpeed
             )
+        )
+        Unit
     }
 
-    override suspend fun changeGapTitle(gapId: Long, title: String) {
-        db?.databaseQueries?.updateGapTitle(title, gapId)
+    override suspend fun updateGapParameters(gapId: Long, parameters: GapParametersEntity) = query { _, queries ->
+        queries.updateGapParameters(
+            gap_id = gapId,
+            gap_length = parameters.gap,
+            table_length = parameters.table,
+            start_angle = parameters.startAngle,
+            start_height = parameters.startHeight,
+            end_angle = parameters.finishAngle,
+            end_height = parameters.finishHeight,
+            start_speed = parameters.startSpeed
+        )
+        Unit
     }
 
-    private fun getGapId(title: String, date: String) = "$title$date".hashCode().toLong()
+    override suspend fun changeGapTitle(gapId: Long, title: String) = query { _, queries ->
+        queries.updateGapTitle(title, gapId)
+        Unit
+    }
 }
+
+private fun String.normalizedTitle() = if (this == LEGACY_UNTITLED) "" else this
