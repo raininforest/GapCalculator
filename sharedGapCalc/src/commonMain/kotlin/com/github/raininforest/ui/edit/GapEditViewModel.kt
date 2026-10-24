@@ -25,9 +25,17 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : ViewM
 
     fun fieldState(field: GapEditField): StateFlow<String> = fields.getValue(field)
 
+    /** Keeps only what can be part of a number: digits, one decimal separator and a leading minus. */
     fun onFieldChanged(field: GapEditField, text: String) {
-        fields.getValue(field).value = text
+        fields.getValue(field).value = text.sanitizeNumber()
     }
+
+    /** Lets a platform apply the same filter to what it shows before the view-model confirms it. */
+    fun sanitized(text: String): String = text.sanitizeNumber()
+
+    /** True when the field holds a value that will be used as typed (empty counts as 0). */
+    fun isFieldValid(text: String): Boolean =
+        text.isEmpty() || text.replace(',', '.').toDoubleOrNull() != null
     private var fetchJob: Job? = null
 
     fun fetchGapParameters(gapId: Long) {
@@ -82,5 +90,17 @@ class GapEditViewModel(private val gapEditRepository: GapEditRepository) : ViewM
             .replace(oldChar = ',', newChar = '.')
             .ifEmpty { DEFAULT_ZERO_VALUE }
         return if (safeVal.toDoubleOrNull() != null) safeVal else DEFAULT_ZERO_VALUE
+    }
+
+    private fun String.sanitizeNumber(): String {
+        var separatorSeen = false
+        return filterIndexed { index, char ->
+            when {
+                char.isDigit() -> true
+                char == '-' -> index == 0
+                char == '.' || char == ',' -> (!separatorSeen).also { separatorSeen = true }
+                else -> false
+            }
+        }
     }
 }
