@@ -1,5 +1,5 @@
 [versions]
-androidGradlePlugin = "9.4.1"
+androidGradlePlugin = "9.3.0"
 kotlin = "2.4.21"
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0"

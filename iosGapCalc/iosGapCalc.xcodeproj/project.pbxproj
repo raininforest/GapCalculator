@@ -66,18 +66,6 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		B0C0DE0000000000000100 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B0C0DE0000000000000102 /* en */,
-				B0C0DE0000000000000103 /* ru */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin PBXGroup section */
 		058557D7273AAEEB004C7B11 /* Preview Content */ = {
 			isa = PBXGroup;
@@ -291,6 +279,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B0C0DE0000000000000100 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B0C0DE0000000000000102 /* en */,
+				B0C0DE0000000000000103 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		7555FFA3242A565B00829871 /* Debug */ = {
