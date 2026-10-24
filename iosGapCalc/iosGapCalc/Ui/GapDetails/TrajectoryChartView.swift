@@ -30,6 +30,11 @@ struct TrajectoryChartView: View {
         }
     }
 
+    /// Height of the chart panel for a given width: the jump keeps its proportions, so a short jump needs less room.
+    func idealHeight(forWidth width: CGFloat, maxHeight: CGFloat) -> CGFloat {
+        panelSize(in: CGSize(width: width, height: maxHeight)).height
+    }
+
     private func panelSize(in available: CGSize) -> CGSize {
         let bounds = chartData.bounds()
         let scale = min(
@@ -57,6 +62,8 @@ struct TrajectoryChartView: View {
         }
         .frame(width: panel.width, height: panel.height)
         .clipShape(RoundedRectangle(cornerRadius: PADDING))
+        .accessibilityElement()
+        .accessibilityLabel(L("chart_description"))
         .gesture(
             SimultaneousGesture(
                 MagnificationGesture()
@@ -157,7 +164,7 @@ private struct ChartViewport {
     func drawLabels(in context: inout GraphicsContext) {
         let color = Color(hex: HexColorsKt.CHART_LABEL)
         func label(_ value: Double) -> Text {
-            Text("\(Int(value))").font(.system(size: 10)).foregroundColor(color)
+            Text("\(Int(value))").font(.system(size: 11)).foregroundColor(color)
         }
         for tick in xTicks {
             let x = point(x: tick, y: 0).x

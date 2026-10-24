@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import sharedGapCalc
 
 func L(_ key: String) -> String {
@@ -72,6 +73,22 @@ extension CalculationWarnings {
         default: return ""
         }
     }
+}
+
+extension CalculationWarnings {
+    /// How bad it is: red for a hard landing, orange for an undershoot, amber for a big jump.
+    var color: Color {
+        switch self {
+        case .hardLanding: return Colors.warningRed
+        case .earlyLanding: return Colors.warningOrange
+        default: return Colors.warningAmber
+        }
+    }
+}
+
+extension ParameterValue {
+    /// "7.46 m"
+    var valueWithUnit: String { "\(value) \(parameter.unitSymbol)" }
 }
 
 func parameterLines(_ items: [ParameterValue]) -> String {

@@ -18,6 +18,48 @@ struct NoData: View {
     }
 }
 
+struct EmptyListView: View {
+    var body: some View {
+        VStack(spacing: ITEM_SPACING) {
+            Text(L("empty_list_title"))
+                .font(.headline)
+                .foregroundColor(Colors.darkGray)
+            Text(L("empty_list_hint"))
+                .font(.subheadline)
+                .foregroundColor(Colors.darkGray.opacity(0.75))
+                .multilineTextAlignment(.center)
+        }
+        .padding(PADDING)
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+struct SectionTitle: View {
+    let text: String
+
+    init(_ text: String) { self.text = text }
+
+    var body: some View {
+        Text(text)
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(Colors.darkGray.opacity(0.75))
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// "2026-10-20 18:05:11.000" -> "Oct 20, 2026 at 6:05 PM" in the user's locale; unknown formats stay as they are.
+func formatGapDate(_ raw: String) -> String {
+    let parser = DateFormatter()
+    parser.locale = Locale(identifier: "en_US_POSIX")
+    parser.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+    guard let date = parser.date(from: raw) else { return raw }
+    let output = DateFormatter()
+    output.dateStyle = .medium
+    output.timeStyle = .short
+    return output.string(from: date)
+}
+
 struct PrimaryButton: View {
     let title: String
     var fullWidth: Bool = true

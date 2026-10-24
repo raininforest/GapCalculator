@@ -17,6 +17,7 @@ let CLOSE_BUTTON_ICON_NAME = "xmark"
 
 struct GapListScreen: View {
     @StateObject private var observable = GapListObservable()
+    @State private var pendingRemoval: GapListItem?
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -24,7 +25,7 @@ struct GapListScreen: View {
             ScrollView {
                 GapListContent(
                     gapListState: observable.state,
-                    onGapRemovedClicked: observable.remove
+                    onGapRemovedClicked: { pendingRemoval = $0 }
                 )
                 .padding(.bottom, BUTTON_HEIGHT + PADDING * 2)
             }
@@ -33,29 +34,38 @@ struct GapListScreen: View {
         }
         .navigationTitle(L("gap_list_title"))
         .onAppear(perform: observable.refresh)
+        .alert(
+            L("delete_title"),
+            isPresented: Binding(get: { pendingRemoval != nil }, set: { if !$0 { pendingRemoval = nil } }),
+            presenting: pendingRemoval
+        ) { item in
+            Button(L("delete"), role: .destructive) { observable.remove(id: item.id) }
+            Button(L("cancel"), role: .cancel) {}
+        } message: { item in
+            Text(String(format: L("delete_message"), item.title.isEmpty ? L("untitled") : item.title))
+        }
     }
 }
 
 struct GapListContent: View {
     let gapListState: GapListState
-    let onGapRemovedClicked: (Int64) -> Void
+    let onGapRemovedClicked: (GapListItem) -> Void
     
     var body: some View {
-        if let state = gapListState.data() {
+        if let state = gapListState.data(), !state.gapList.isEmpty {
             GapListDataView(
                 currenState: state,
                 onGapRemovedClicked: onGapRemovedClicked
             )
         } else {
-            NoData()
-                .frame(maxWidth: .infinity, minHeight: 300)
+            EmptyListView()
         }
     }
 }
 
 struct GapListDataView: View {
     let currenState: GapListState.GapListData
-    let onGapRemovedClicked: (Int64) -> Void
+    let onGapRemovedClicked: (GapListItem) -> Void
     
     var body: some View {
         GapList(
@@ -67,7 +77,7 @@ struct GapListDataView: View {
 
 struct GapList: View {
     let gapList: [GapListItem]
-    let onGapRemovedClicked: (Int64) -> Void
+    let onGapRemovedClicked: (GapListItem) -> Void
     
     var body: some View {
         LazyVStack(spacing: ITEM_SPACING) {
@@ -88,7 +98,7 @@ struct GapList: View {
 
 struct GapListItemView: View {
     let gapListItem: GapListItem
-    let onGapRemovedClicked: (Int64) -> Void
+    let onGapRemovedClicked: (GapListItem) -> Void
     
     var body: some View {
         HStack {
@@ -96,13 +106,13 @@ struct GapListItemView: View {
                 Text(gapListItem.title.isEmpty ? L("untitled") : gapListItem.title)
                     .font(.body)
                     .foregroundColor(Colors.darkGray)
-                Text(gapListItem.date)
-                    .font(.body)
-                    .foregroundColor(Colors.darkGray)
+                Text(formatGapDate(gapListItem.date))
+                    .font(.subheadline)
+                    .foregroundColor(Colors.darkGray.opacity(0.75))
             }
             Spacer()
             Button(
-                action: { onGapRemovedClicked(gapListItem.id) }
+                action: { onGapRemovedClicked(gapListItem) }
             ) {
                 Image(systemName: CLOSE_BUTTON_ICON_NAME)
                     .foregroundColor(Colors.white)
@@ -113,6 +123,7 @@ struct GapListItemView: View {
             }
             .background(Colors.darkestGray)
             .clipShape(Circle())
+            .accessibilityLabel(L("remove_jump"))
         }
         .padding(.all, PADDING)
         // the end caps of the capsule are concentric with the round remove button
@@ -142,7 +153,7 @@ struct GapListScreen_Previews: PreviewProvider {
                     date: "2021-10-02"
                 )
             ],
-                onGapRemovedClicked: { id in }
+                onGapRemovedClicked: { item in }
         )
         .background(Colors.lightGray)
     }

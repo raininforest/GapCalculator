@@ -61,16 +61,24 @@ final class StringFlowField: ObservableObject {
     @Published private(set) var text: String = ""
 
     private let write: (String) -> Void
+    private let transform: (String) -> String
     private var watcher: FlowWatcher<NSString>?
 
-    init(flow: Kotlinx_coroutines_coreStateFlow, write: @escaping (String) -> Void) {
+    /// `transform` filters what the user typed before it is shown (the view-model applies the same filter).
+    init(
+        flow: Kotlinx_coroutines_coreStateFlow,
+        transform: @escaping (String) -> String = { $0 },
+        write: @escaping (String) -> Void
+    ) {
         self.write = write
+        self.transform = transform
         watcher = FlowWatcher(flow: flow) { [weak self] in self?.text = $0 as String }
     }
 
     func set(_ newValue: String) {
-        text = newValue
-        write(newValue)
+        let value = transform(newValue)
+        text = value
+        write(value)
     }
 
     func cancel() { watcher?.cancel() }
@@ -92,7 +100,11 @@ final class GapEditObservable: ObservableObject {
         let vm = viewModel
         title = StringFlowField(flow: vm.gapTitleState) { vm.gapTitleChanged(text: $0) }
         func field(_ field: GapEditField) -> StringFlowField {
-            StringFlowField(flow: vm.fieldState(field: field)) { vm.onFieldChanged(field: field, text: $0) }
+            StringFlowField(
+                flow: vm.fieldState(field: field),
+                transform: { vm.sanitized(text: $0) },
+                write: { vm.onFieldChanged(field: field, text: $0) }
+            )
         }
         gap = field(.gap)
         table = field(.table)
@@ -104,6 +116,8 @@ final class GapEditObservable: ObservableObject {
     }
 
     func load(gapId: Int64) { viewModel.fetchGapParameters(gapId: gapId) }
+
+    func isValid(_ text: String) -> Bool { viewModel.isFieldValid(text: text) }
 
     func apply(onSaved: @escaping () -> Void) { viewModel.onApplyClicked(onSaved: onSaved) }
 
