@@ -1,6 +1,28 @@
 package com.github.raininforest.android.ui.gap.details.chart
 
 import android.graphics.Paint
+import androidx.compose.foundation.border
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.Icon
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import com.github.raininforest.android.R
+import com.github.raininforest.android.theme.amber
+import com.github.raininforest.android.theme.orange
+import com.github.raininforest.android.theme.red
+import com.github.raininforest.android.ui.gap.common.labelRes
+import com.github.raininforest.android.ui.gap.common.symbolRes
+import com.github.raininforest.android.ui.gap.common.textRes
+import com.github.raininforest.data.ELEMENTS_BLUE
+import com.github.raininforest.data.MIN_R_LINE
+import com.github.raininforest.data.TOLERANCE_OLIVE
+import com.github.raininforest.data.TRACE_GREEN
+import com.github.raininforest.data.entity.CalculationWarnings
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -39,11 +61,9 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.raininforest.android.ui.gap.details.PADDING
 import androidx.compose.ui.platform.LocalContext
-import com.github.raininforest.android.ui.gap.common.parameterLines
 import com.github.raininforest.data.CHART_BACKGROUND
 import com.github.raininforest.data.entity.ParameterValue
 import com.github.raininforest.data.CHART_GRID
@@ -60,7 +80,11 @@ private const val MAX_ZOOM = 12f
 private const val LEFT_MARGIN_DP = 28
 private const val BOTTOM_MARGIN_DP = 20
 private const val MARGIN_DP = 4
-private const val LABEL_SIZE_DP = 10f
+private const val LABEL_SIZE_DP = 11f
+private const val SECTION_SPACING = 12
+private const val CARD_RADIUS = 16
+private const val MIN_CHART_HEIGHT_DP = 120
+private const val MAX_CHART_HEIGHT_DP = 320
 
 @Composable
 fun ChartView(
@@ -73,50 +97,208 @@ fun ChartView(
             .fillMaxSize()
             .padding(horizontal = PADDING.dp)
     ) {
+        val availableWidth = maxWidth
         if (maxWidth > maxHeight) {
-            // landscape: parameters on the left, the chart gets the full height on the right
+            // landscape: numbers on the left, the chart gets the full height on the right
             Row(modifier = Modifier.fillMaxSize()) {
-                Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-                    Parameters(data.textData.inputGapParameters, TextAlign.Start)
-                    Spacer(modifier = Modifier.height(PADDING.dp))
-                    Parameters(data.textData.outputGapParameters, TextAlign.Start)
+                Column(
+                    modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(SECTION_SPACING.dp)
+                ) {
+                    WarningBanner(data.warnings)
+                    Results(data.textData.outputGapParameters)
+                    InputParameters(data.textData.inputGapParameters)
                 }
                 Spacer(modifier = Modifier.width(PADDING.dp))
-                TrajectoryChart(
-                    chartData = data.chartData,
-                    modifier = Modifier
-                        .weight(2f)
-                        .fillMaxHeight()
-                        .padding(bottom = PADDING.dp)
-                )
+                Column(modifier = Modifier.weight(2f).fillMaxHeight()) {
+                    TrajectoryChart(
+                        chartData = data.chartData,
+                        modifier = Modifier.weight(1f).fillMaxWidth()
+                    )
+                    ChartLegend(modifier = Modifier.padding(vertical = SECTION_SPACING.dp))
+                }
             }
         } else {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Parameters(data.textData.inputGapParameters, TextAlign.Start, Modifier.weight(1f))
-                    Parameters(data.textData.outputGapParameters, TextAlign.End, Modifier.weight(1f))
-                }
-                Spacer(modifier = Modifier.height(PADDING.dp))
+            Column(
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(SECTION_SPACING.dp)
+            ) {
+                WarningBanner(data.warnings)
+                // the jump keeps its proportions, so a short jump needs less room than a tall one
+                val bounds = remember(data.chartData) { data.chartData.bounds() }
+                val plotWidth = availableWidth - (PADDING * 2 + LEFT_MARGIN_DP + MARGIN_DP).dp
+                val plotHeight = plotWidth * (bounds.height / bounds.width).toFloat()
+                val chartHeight = (plotHeight + (BOTTOM_MARGIN_DP + MARGIN_DP).dp)
+                    .coerceIn(MIN_CHART_HEIGHT_DP.dp, MAX_CHART_HEIGHT_DP.dp)
                 TrajectoryChart(
                     chartData = data.chartData,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(bottom = PADDING.dp)
+                    modifier = Modifier.fillMaxWidth().height(chartHeight)
+                )
+                ChartLegend()
+                Results(data.textData.outputGapParameters)
+                InputParameters(data.textData.inputGapParameters)
+                Spacer(modifier = Modifier.height(SECTION_SPACING.dp))
+            }
+        }
+    }
+}
+
+/** Every warning on its own row; the colour says how bad it is, the icon and text keep it readable without colour. */
+@Composable
+private fun WarningBanner(warnings: List<CalculationWarnings>) {
+    if (warnings.isEmpty()) return
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        warnings.forEach { warning ->
+            val color = warning.color()
+            val shape = RoundedCornerShape(CARD_RADIUS.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape)
+                    .background(color.copy(alpha = 0.2f))
+                    .border(1.dp, color, shape)
+                    .padding(PADDING.dp)
+                    .semantics(mergeDescendants = true) {}
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_warning),
+                    contentDescription = stringResource(R.string.warning),
+                    tint = color,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = stringResource(warning.textRes()),
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier.padding(start = 12.dp)
                 )
             }
         }
     }
 }
 
+private fun CalculationWarnings.color(): Color = when (this) {
+    CalculationWarnings.HARD_LANDING -> red
+    CalculationWarnings.EARLY_LANDING -> orange
+    CalculationWarnings.BIG_GAP -> amber
+}
+
+/** The computed values as big cards, two per row. */
 @Composable
-private fun Parameters(items: List<ParameterValue>, textAlign: TextAlign, modifier: Modifier = Modifier) {
+private fun Results(items: List<ParameterValue>) {
+    val context = LocalContext.current
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionTitle(stringResource(R.string.section_results))
+        items.chunked(2).forEach { rowItems ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                rowItems.forEach { item ->
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(CARD_RADIUS.dp))
+                            .background(MaterialTheme.colors.onPrimary)
+                            .padding(12.dp)
+                            .semantics(mergeDescendants = true) {}
+                    ) {
+                        Text(
+                            text = context.getString(item.parameter.labelRes()),
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
+                        )
+                        Text(
+                            text = "${item.value} ${context.getString(item.parameter.unit.symbolRes())}",
+                            style = MaterialTheme.typography.h6,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colors.primary
+                        )
+                    }
+                }
+                if (rowItems.size == 1) Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+/** The entered values as a label / value table. */
+@Composable
+private fun InputParameters(items: List<ParameterValue>) {
+    val context = LocalContext.current
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionTitle(stringResource(R.string.section_parameters))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(CARD_RADIUS.dp))
+                .background(MaterialTheme.colors.onPrimary)
+                .padding(horizontal = PADDING.dp, vertical = 8.dp)
+        ) {
+            items.forEach { item ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).semantics(mergeDescendants = true) {},
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = context.getString(item.parameter.labelRes()),
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
+                    )
+                    Text(
+                        text = "${item.value} ${context.getString(item.parameter.unit.symbolRes())}",
+                        style = MaterialTheme.typography.body2,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionTitle(text: String) {
     Text(
-        text = LocalContext.current.parameterLines(items),
-        style = MaterialTheme.typography.caption,
-        textAlign = textAlign,
-        modifier = modifier
+        text = text,
+        style = MaterialTheme.typography.subtitle2,
+        color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
     )
+}
+
+@Composable
+private fun ChartLegend(modifier: Modifier = Modifier) {
+    val entries = listOf(
+        ELEMENTS_BLUE to R.string.legend_ramp,
+        TRACE_GREEN to R.string.legend_trajectory,
+        TOLERANCE_OLIVE to R.string.legend_tolerance,
+        MIN_R_LINE to R.string.legend_min_radius
+    )
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        entries.chunked(2).forEach { rowEntries ->
+            Row {
+                rowEntries.forEach { (hex, textRes) ->
+                    Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(width = 20.dp, height = 4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(parseColor(hex))
+                        )
+                        Text(
+                            text = stringResource(textRes),
+                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colors.primary,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
+        Text(
+            text = stringResource(R.string.axis_unit),
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
+        )
+    }
 }
 
 /** Grid + filled ramps + flight paths; pinch to zoom, drag to pan, double tap to reset. */
@@ -134,9 +316,11 @@ private fun TrajectoryChart(chartData: ChartData, modifier: Modifier = Modifier)
         val panelWidth = (bounds.width.toFloat() * scale).dp + (LEFT_MARGIN_DP + MARGIN_DP).dp
         val panelHeight = (bounds.height.toFloat() * scale).dp + (BOTTOM_MARGIN_DP + MARGIN_DP).dp
 
+        val chartDescription = stringResource(R.string.chart_description)
         androidx.compose.foundation.Canvas(
             modifier = Modifier
                 .size(width = panelWidth, height = panelHeight)
+                .semantics { contentDescription = chartDescription }
                 .clip(RoundedCornerShape(PADDING.dp))
                 .pointerInput(chartData) {
                     detectTransformGestures { centroid, panChange, zoomChange, _ ->

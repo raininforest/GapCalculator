@@ -1,26 +1,38 @@
 package com.github.raininforest.android.ui.gap.list
 
 import android.annotation.SuppressLint
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.TextButton
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import com.github.raininforest.android.theme.red
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.time.format.FormatStyle
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
@@ -40,7 +52,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,7 +59,6 @@ import com.github.raininforest.android.GapCalculatorApplication.Companion.deps
 import com.github.raininforest.android.theme.GapCalcTheme
 import com.github.raininforest.android.theme.green
 import com.github.raininforest.android.theme.whiteGray
-import com.github.raininforest.android.ui.gap.common.NoData
 import com.github.raininforest.ui.list.GapListViewModel
 import com.github.raininforest.ui.list.data.GapListItem
 import com.github.raininforest.ui.list.data.GapListState
@@ -57,6 +67,7 @@ private const val PADDING = 16
 private const val BUTTON_HEIGHT = 48
 private const val ITEM_SPACING = 8
 private const val BUTTON_STROKE_WIDTH = 1
+private const val LIST_BOTTOM_PADDING = 88
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -82,7 +93,7 @@ fun GapListScreen(
         floatingActionButton = {
             FloatingButton(onAddClicked = gapListViewModel::addClicked)
         },
-        floatingActionButtonPosition = FabPosition.Center
+        floatingActionButtonPosition = FabPosition.End
     )
 }
 
@@ -99,25 +110,41 @@ fun Content(
             onGapRemoveClicked = onGapRemoveClicked
         )
 
-        else -> NoData()
+        is GapListState.GapListEmpty -> EmptyList()
+    }
+}
+
+@Composable
+private fun EmptyList() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(PADDING.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.empty_list_title),
+                style = MaterialTheme.typography.body1,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = stringResource(R.string.empty_list_hint),
+                style = MaterialTheme.typography.body2,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
+            )
+        }
     }
 }
 
 @Composable
 fun FloatingButton(onAddClicked: () -> Unit) {
-    Button(
-        modifier = Modifier
-            .height(BUTTON_HEIGHT.dp)
-            .wrapContentWidth(),
+    ExtendedFloatingActionButton(
         onClick = onAddClicked,
-        shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.buttonColors(backgroundColor = green, contentColor = whiteGray)
-    ) {
-        Text(
-            text = stringResource(R.string.add),
-            style = MaterialTheme.typography.body1
-        )
-    }
+        backgroundColor = green,
+        contentColor = whiteGray,
+        text = { Text(text = stringResource(R.string.add), style = MaterialTheme.typography.body1) }
+    )
 }
 
 @Composable
@@ -126,6 +153,10 @@ fun Data(
     onGapClicked: (gapId: Long) -> Unit,
     onGapRemoveClicked: (gapId: Long) -> Unit
 ) {
+    if (currentState.gapList.isEmpty()) {
+        EmptyList()
+        return
+    }
     Surface(modifier = Modifier.fillMaxSize()) {
         GapList(
             gapList = currentState.gapList,
@@ -141,10 +172,26 @@ fun GapList(
     onGapClicked: (gapId: Long) -> Unit,
     onGapRemoveClicked: (gapId: Long) -> Unit
 ) {
+    var pendingRemoval by remember { mutableStateOf<GapListItem?>(null) }
+
     LazyColumn(
-        contentPadding = PaddingValues(PADDING.dp),
+        contentPadding = PaddingValues(
+            start = PADDING.dp,
+            end = PADDING.dp,
+            top = PADDING.dp,
+            bottom = LIST_BOTTOM_PADDING.dp
+        ),
         verticalArrangement = Arrangement.spacedBy(ITEM_SPACING.dp),
     ) {
+        item(key = "title") {
+            Text(
+                text = stringResource(R.string.title_jumps),
+                style = MaterialTheme.typography.h5,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier.padding(vertical = 8.dp).semantics { heading() }
+            )
+        }
         items(
             items = gapList,
             key = { gapListItem -> gapListItem.id }
@@ -152,10 +199,36 @@ fun GapList(
             GapListItemView(
                 item = gapListItem,
                 onGapClicked = onGapClicked,
-                onGapRemoveClicked = onGapRemoveClicked
+                onGapRemoveClicked = { pendingRemoval = gapListItem }
             )
         }
     }
+
+    pendingRemoval?.let { item ->
+        val title = item.title.ifBlank { stringResource(R.string.untitled) }
+        AlertDialog(
+            onDismissRequest = { pendingRemoval = null },
+            title = { Text(stringResource(R.string.delete_title)) },
+            text = { Text(stringResource(R.string.delete_message, title)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingRemoval = null
+                    onGapRemoveClicked(item.id)
+                }) { Text(stringResource(R.string.delete), color = red) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingRemoval = null }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+}
+
+/** "2026-10-20 18:05:11.000" -> "Oct 20, 2026, 6:05 PM" in the user's locale; unknown formats stay as they are. */
+private fun formatDate(raw: String): String = try {
+    LocalDateTime.parse(raw.replace(' ', 'T'))
+        .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT))
+} catch (_: DateTimeParseException) {
+    raw
 }
 
 @Composable
@@ -165,6 +238,7 @@ fun GapListItemView(
     onGapRemoveClicked: (gapId: Long) -> Unit
 ) {
     val shape = RoundedCornerShape(percent = 50) // concentric with the round remove button
+    val title = item.title.ifBlank { stringResource(R.string.untitled) }
     Card(shape = shape) {
         Row(
             modifier = Modifier
@@ -173,26 +247,23 @@ fun GapListItemView(
                 .wrapContentHeight()
                 .clip(shape)
                 .background(color = MaterialTheme.colors.onPrimary)
-                .padding(all = PADDING.dp),
+                .padding(start = PADDING.dp + 8.dp, top = PADDING.dp, end = PADDING.dp, bottom = PADDING.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = item.title.ifBlank { stringResource(R.string.untitled) },
+                    text = title,
                     color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.body1,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = item.date,
-                    color = MaterialTheme.colors.primary,
+                    text = formatDate(item.date),
+                    color = MaterialTheme.colors.primary.copy(alpha = 0.75f),
                     style = MaterialTheme.typography.body2
                 )
             }
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(Color.Red)
-            )
             OutlinedButton(
                 onClick = { onGapRemoveClicked(item.id) },
                 shape = CircleShape,
@@ -201,7 +272,10 @@ fun GapListItemView(
                 border = BorderStroke(BUTTON_STROKE_WIDTH.dp, MaterialTheme.colors.onPrimary),
                 colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colors.onPrimary)
             ) {
-                Icon(painter = painterResource(R.drawable.ic_close), contentDescription = "")
+                Icon(
+                    painter = painterResource(R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.delete) + ": " + title
+                )
             }
         }
     }

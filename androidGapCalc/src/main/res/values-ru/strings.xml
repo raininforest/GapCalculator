@@ -30,4 +30,23 @@
     <string name="unit_meter">м</string>
     <string name="unit_degree">град.</string>
     <string name="unit_kmh">км/ч</string>
+
+    <string name="title_jumps">Прыжки</string>
+    <string name="empty_list_title">Пока нет прыжков</string>
+    <string name="empty_list_hint">Нажмите «Добавить», чтобы создать первый</string>
+    <string name="delete">Удалить</string>
+    <string name="section_parameters">Параметры</string>
+    <string name="section_results">Результаты</string>
+    <string name="axis_unit">Оси в метрах</string>
+    <string name="legend_ramp">Трамплин и приземление</string>
+    <string name="legend_trajectory">Траектория полёта</string>
+    <string name="legend_tolerance">Угол вылета \u00B15\u00B0</string>
+    <string name="legend_min_radius">Мин. радиус вылета</string>
+    <string name="chart_description">График траектории прыжка: по горизонтали расстояние в метрах, по вертикали высота в метрах</string>
+    <string name="invalid_number">Введите число</string>
+    <string name="title_hint">Название прыжка</string>
+    <string name="warning">Предупреждение</string>
+    <string name="delete_title">Удалить прыжок?</string>
+    <string name="delete_message">«%1$s» будет удалён. Это действие нельзя отменить.</string>
+    <string name="cancel">Отмена</string>
 </resources>

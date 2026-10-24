@@ -2,20 +2,15 @@ package com.github.raininforest.android.ui.gap.details
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.github.raininforest.android.R
 import com.github.raininforest.android.ui.gap.common.shareText
-import com.github.raininforest.android.ui.gap.common.textRes
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,7 +43,6 @@ fun GapDetailsScreen(
     val context = LocalContext.current
     val topBarTitle: String
     val mainContentComposable: @Composable (paddingValues: PaddingValues) -> Unit
-    val snackbarHostState = remember { SnackbarHostState() }
 
     when (val currentState = gapDetailsState) {
         is GapDetailsState.GapDetailsData -> {
@@ -59,7 +53,6 @@ fun GapDetailsScreen(
                     data = currentState
                 )
             }
-            currentState.ShowWarnings(snackbarHostState = snackbarHostState)
         }
 
         is GapDetailsState.GapDetailsEmpty -> {
@@ -74,7 +67,6 @@ fun GapDetailsScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopBar(
                 onBackClicked = onBackClicked,
@@ -101,19 +93,6 @@ fun GapDetailsScreen(
             )
         }
     )
-}
-
-@Composable
-private fun GapDetailsState.GapDetailsData.ShowWarnings(snackbarHostState: SnackbarHostState) {
-    if (warnings.isNotEmpty()) {
-        val message = warnings.map { stringResource(it.textRes()) }.joinToString("\n")
-        LaunchedEffect(key1 = this, key2 = message) {
-            snackbarHostState.showSnackbar(
-                message = message,
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
 }
 
 @Preview(showBackground = true)

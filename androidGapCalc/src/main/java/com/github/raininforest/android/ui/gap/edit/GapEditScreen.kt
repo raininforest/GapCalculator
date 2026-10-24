@@ -13,7 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
@@ -60,6 +66,7 @@ private const val ITEM_HEIGHT = 72
 private const val ITEM_CORNER_RADIUS = 32
 private const val ITEM_ICON_SIZE = 40
 private const val ITEM_FIELD_WIDTH = 124
+private const val FIELD_CORNER_RADIUS = 20
 
 @Composable
 fun GapEditScreen(
@@ -90,6 +97,15 @@ fun GapEditScreen(
                             },
                             placeholder = { Text(stringResource(R.string.untitled)) },
                             singleLine = true,
+                            // same pill as the buttons and rows, filled instead of outlined
+                            shape = RoundedCornerShape(percent = 50),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = MaterialTheme.colors.primary,
+                                cursorColor = MaterialTheme.colors.primary,
+                                backgroundColor = MaterialTheme.colors.onPrimary,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
                             modifier = modifier
                         )
                     }
@@ -158,30 +174,52 @@ fun GapEditItem(field: GapEditField, viewModel: GapEditViewModel) {
             overflow = TextOverflow.Ellipsis
         )
 
-        CompositionLocalProvider(
-            LocalTextSelectionColors provides customTextSelectionColors,
-        ) {
-            val state by viewModel.fieldState(field).collectAsState()
-            OutlinedTextField(
-                modifier = Modifier
-                    .padding(end = PADDING.dp)
-                    .width(ITEM_FIELD_WIDTH.dp),
-                value = state,
-                onValueChange = { inputString ->
-                    viewModel.onFieldChanged(field, inputString)
-                },
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End, fontSize = 28.sp),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    backgroundColor = MaterialTheme.colors.onPrimary
-                ),
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        GapEditNumberField(field = field, viewModel = viewModel)
+    }
+}
+
+@Composable
+private fun GapEditNumberField(field: GapEditField, viewModel: GapEditViewModel) {
+    CompositionLocalProvider(
+        LocalTextSelectionColors provides customTextSelectionColors,
+    ) {
+        val state by viewModel.fieldState(field).collectAsState()
+        val focusManager = LocalFocusManager.current
+        val isLast = field == GapEditField.entries.last()
+        val isError = !viewModel.isFieldValid(state)
+        val errorText = stringResource(R.string.invalid_number)
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(end = PADDING.dp)
+                .width(ITEM_FIELD_WIDTH.dp)
+                .semantics { if (isError) error(errorText) },
+            shape = RoundedCornerShape(FIELD_CORNER_RADIUS.dp),
+            isError = isError,
+            value = state,
+            onValueChange = { inputString ->
+                viewModel.onFieldChanged(field, inputString)
+            },
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End, fontSize = 28.sp),
+            // a tinted box so it reads as an input, not as a plain number
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = MaterialTheme.colors.primary,
+                cursorColor = MaterialTheme.colors.primary,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent,
+                backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.08f)
+            ),
+            maxLines = 1,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = if (isLast) ImeAction.Done else ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                onDone = { focusManager.clearFocus() }
             )
-        }
+        )
     }
 }
 

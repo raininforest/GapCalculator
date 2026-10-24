@@ -30,4 +30,23 @@
     <string name="unit_meter">m</string>
     <string name="unit_degree">deg.</string>
     <string name="unit_kmh">km/h</string>
+
+    <string name="title_jumps">Jumps</string>
+    <string name="empty_list_title">No jumps yet</string>
+    <string name="empty_list_hint">Tap Add to create your first jump</string>
+    <string name="delete">Delete</string>
+    <string name="section_parameters">Parameters</string>
+    <string name="section_results">Results</string>
+    <string name="axis_unit">Axes are in meters</string>
+    <string name="legend_ramp">Ramp and landing</string>
+    <string name="legend_trajectory">Flight path</string>
+    <string name="legend_tolerance">Takeoff angle \u00B15\u00B0</string>
+    <string name="legend_min_radius">Min. takeoff radius</string>
+    <string name="chart_description">Jump trajectory chart, horizontal axis is distance in meters, vertical axis is height in meters</string>
+    <string name="invalid_number">Enter a number</string>
+    <string name="title_hint">Jump name</string>
+    <string name="warning">Warning</string>
+    <string name="delete_title">Delete this jump?</string>
+    <string name="delete_message">"%1$s" will be removed. This cannot be undone.</string>
+    <string name="cancel">Cancel</string>
 </resources>
