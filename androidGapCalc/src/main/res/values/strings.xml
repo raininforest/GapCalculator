@@ -44,7 +44,6 @@
     <string name="legend_min_radius">Min. takeoff radius</string>
     <string name="chart_description">Jump trajectory chart, horizontal axis is distance in meters, vertical axis is height in meters</string>
     <string name="invalid_number">Enter a number</string>
-    <string name="title_hint">Jump name</string>
     <string name="warning">Warning</string>
     <string name="delete_title">Delete this jump?</string>
     <string name="delete_message">"%1$s" will be removed. This cannot be undone.</string>

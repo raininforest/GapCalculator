@@ -63,7 +63,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.github.raininforest.android.ui.gap.details.PADDING
-import androidx.compose.ui.platform.LocalContext
 import com.github.raininforest.data.CHART_BACKGROUND
 import com.github.raininforest.data.entity.ParameterValue
 import com.github.raininforest.data.CHART_GRID
@@ -187,7 +186,6 @@ private fun CalculationWarnings.color(): Color = when (this) {
 /** The computed values as big cards, two per row. */
 @Composable
 private fun Results(items: List<ParameterValue>) {
-    val context = LocalContext.current
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionTitle(stringResource(R.string.section_results))
         items.chunked(2).forEach { rowItems ->
@@ -202,12 +200,12 @@ private fun Results(items: List<ParameterValue>) {
                             .semantics(mergeDescendants = true) {}
                     ) {
                         Text(
-                            text = context.getString(item.parameter.labelRes()),
+                            text = stringResource(item.parameter.labelRes()),
                             style = MaterialTheme.typography.caption,
                             color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
                         )
                         Text(
-                            text = "${item.value} ${context.getString(item.parameter.unit.symbolRes())}",
+                            text = "${item.value} ${stringResource(item.parameter.unit.symbolRes())}",
                             style = MaterialTheme.typography.h6,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colors.primary
@@ -223,7 +221,6 @@ private fun Results(items: List<ParameterValue>) {
 /** The entered values as a label / value table. */
 @Composable
 private fun InputParameters(items: List<ParameterValue>) {
-    val context = LocalContext.current
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionTitle(stringResource(R.string.section_parameters))
         Column(
@@ -239,12 +236,12 @@ private fun InputParameters(items: List<ParameterValue>) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = context.getString(item.parameter.labelRes()),
+                        text = stringResource(item.parameter.labelRes()),
                         style = MaterialTheme.typography.body2,
                         color = MaterialTheme.colors.primary.copy(alpha = 0.75f)
                     )
                     Text(
-                        text = "${item.value} ${context.getString(item.parameter.unit.symbolRes())}",
+                        text = "${item.value} ${stringResource(item.parameter.unit.symbolRes())}",
                         style = MaterialTheme.typography.body2,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colors.primary
